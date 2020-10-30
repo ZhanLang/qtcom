@@ -20,13 +20,11 @@ SOURCES += \
     qtcom.cpp
 
 HEADERS += \
-    msunknown.h \
     qtcom_global.h \
     mscomdef.h \
     qtcom.h \
     mscomptr.h \
     mscombase.h \
-    msuuid.h \
     guidfun.h
 
 
