@@ -26,6 +26,7 @@ HEADERS += \
     mscomptr.h \
     mscombase.h \
     msuuid.h \
+    guidfun.h
 
 
 TRANSLATIONS += \

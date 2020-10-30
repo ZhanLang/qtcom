@@ -8,4 +8,9 @@
 
 #define RFAILED(x) { HRESULT _h_r_ = (x); if(FAILED(_h_r_)) return _h_r_; }
 
+
+
+
+
+
 #endif
