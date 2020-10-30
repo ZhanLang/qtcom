@@ -18,7 +18,7 @@
 #else
         #define USES_GUIDCONVERSION USES_GUIDCONVERSIONA
 #endif
-
+#pragma warning( push )
 static GUID S2GUIDA(const char* lpString, bool bHaveBracket = true)
 {
     GUID guid = GUID_NULL;
@@ -34,8 +34,17 @@ static GUID S2GUIDA(const char* lpString, bool bHaveBracket = true)
     long  Data234[ 10 ] = {0};
     sscanf(szTemp,
         bHaveBracket?"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}":"%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        &guid.Data1, Data234, Data234+1,
-        Data234+2, Data234+3, Data234+4, Data234+5, Data234+6, Data234+7, Data234+8, Data234+9);
+       &guid.Data1,
+       Data234,
+       Data234+1,
+       Data234+2,
+       Data234+3,
+       Data234+4,
+       Data234+5,
+       Data234+6,
+       Data234+7,
+       Data234+8,
+       Data234+9);
 
     guid.Data2 = (unsigned short)Data234[0];
     guid.Data3 = (unsigned short)Data234[1];
@@ -62,9 +71,17 @@ static const char* GUIDToSA(const GUID& guid, char* lpGuidBuf, unsigned dwSize, 
 
     sprintf(lpGuidBuf,
         bHaveBracket?"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}":"%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        guid.Data1, guid.Data2, guid.Data3,
-        guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
-        guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+        guid.Data1,
+        guid.Data2,
+        guid.Data3,
+        guid.Data4[0],
+        guid.Data4[1],
+        guid.Data4[2],
+        guid.Data4[3],
+        guid.Data4[4],
+        guid.Data4[5],
+        guid.Data4[6],
+        guid.Data4[7]);
 
     return lpGuidBuf;
 };
