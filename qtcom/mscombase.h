@@ -55,7 +55,6 @@ struct strless
 #pragma warning( push )
 #pragma warning( disable : 4996 )
 
-//bHaveBracketÊÇ·ñ´øÀ¨ºÅ
 static GUID S2GUIDA(LPCSTR lpString, bool bHaveBracket = true)
 {
 	GUID guid = GUID_NULL;

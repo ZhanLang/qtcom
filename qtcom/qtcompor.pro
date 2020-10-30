@@ -21,9 +21,12 @@ SOURCES += \
 
 HEADERS += \
     qtcom_global.h \
+    mscomdef.h \
     qtcom.h \
-    comptr.h \
-    combase.h
+    mscomptr.h \
+    mscombase.h \
+    msuuid.h \
+
 
 TRANSLATIONS += \
     qtcom_zh_CN.ts
