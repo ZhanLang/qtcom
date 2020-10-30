@@ -8,7 +8,8 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 CONFIG += ordered
 TEMPLATE = subdirs
-SUBDIRS += ./qtcom/qtcompor.pro
+SUBDIRS += ./qtcom/qtcompor.pro \
+    example/example
        
 
 
