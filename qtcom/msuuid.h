@@ -42,6 +42,4 @@ typedef struct _GUID {
 #endif
 
 
-#include "linux/lcom.h"
-
 #endif
