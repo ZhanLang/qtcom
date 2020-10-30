@@ -20,6 +20,7 @@ SOURCES += \
     qtcom.cpp
 
 HEADERS += \
+    msunknown.h \
     qtcom_global.h \
     mscomdef.h \
     qtcom.h \
