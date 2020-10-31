@@ -5,8 +5,12 @@
 #include "comiface.h"
 #include "comstd.h"
 
-struct ClsdDefine
+
+
+
+class ClsdDefine
 {
+public:
     ClsdDefine(REFGUID _clsid, HRESULT (*pfunc)(const IID&, void**), const char* progid)
     {
         clsid = _clsid;
@@ -18,29 +22,32 @@ struct ClsdDefine
     HRESULT (*pfnGetClassObject)(const IID&, void**);
     char ProgID[MAX_PROGIDLEN];
 };
-
-extern std::vector<ClsdDefine> g_mapClassObject;
+//extern
 
 #define BEGIN_CLIDMAP \
-     std::vector<ClsdDefine> g_mapClassObject;
+std::vector<ClsdDefine> g_mapClassObject;\
 
 #define CLIDMAPENTRY_BEGIN \
-     class clsCNullObjcetUnkown{public:clsCNullObjcetUnkown(){ g_mapClassObject.push_back(ClsdDefine{CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, ""});}} impCNullObjcetUnkown;
+    class CLSIDExport{\
+        public:\
+        CLSIDExport()\
+        {\
+            g_mapClassObject.push_back(ClsdDefine(CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, ""));
 
 #define CLIDMAPENTRY(CID,CLASS) \
-    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, ""));}} imp##CLASS;
+     g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, ""));
 
 #define CLIDMAPENTRY_NOROT(CID,CLASS) \
- class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, ""));}} imp##CLASS;
+    g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, ""));
 
 #define CLIDMAPENTRY_NOROT_PROGID(CID,CLASS,PROGID) \
-class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, PROGID));}} imp##CLASS;
+    g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, PROGID));
 
 #define CLIDMAPENTRY_PROGID(CID,CLASS,PROGID) \
-    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID));}} imp##CLASS;
+    g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID));
 
 
-#define CLIDMAPENTRY_END
+#define CLIDMAPENTRY_END }}; CLSIDExport globalExport;
 
 #define END_CLIDMAP ;
 
@@ -49,8 +56,6 @@ class TClsFactory : public IFactory, public CUnknownImp
 {
 public: // IMSBase:
     UNKNOWN_IMP1(IClassFactory)
-
-    static std::vector<ClsdDefine> g_mapClassObject;
 public:
 
     // IClassFactory
@@ -128,11 +133,13 @@ public: // IMSClassFactory:
     STDMETHOD_(LONG, GetCount)()
     {
         return g_mapClassObject.size();
+        return 0;
     }
 
 
     STDMETHOD_(const char*, ProgIDFromCLSID)(REFCLSID clsid)
     {
+
         for(int i = 1; g_mapClassObject.size(); ++i)
         {
             if(clsid == g_mapClassObject[i].clsid)
@@ -140,6 +147,7 @@ public: // IMSClassFactory:
                 return g_mapClassObject[i].ProgID;
             }
         }
+
         return "";
     }
 

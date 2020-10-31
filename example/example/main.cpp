@@ -38,11 +38,15 @@ MS_DEFINE_GUID(CLSID_CSampleClass,
     0x2fc8af14, 0xe405, 0x4a74, 0xb1, 0x76, 0x0, 0x3, 0x95, 0x5b, 0x11, 0xb0);
 
 
+
+
+
 BEGIN_CLIDMAP
 CLIDMAPENTRY_BEGIN
 CLIDMAPENTRY_PROGID(CLSID_CSampleClass, CSampleClass,"CSampleClass.1")
 CLIDMAPENTRY_END
 DEFINE_ALL_EXPORTFUN
+
 
 
 int main(int argc, char *argv[])
