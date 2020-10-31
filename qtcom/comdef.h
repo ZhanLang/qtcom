@@ -44,8 +44,7 @@ static GUID GUID_NULL = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0 ,0}};
 
 inline bool operator == (const GUID& left, const GUID& right)
 {
-    int b = memcmp(&left, &right, sizeof(GUID));
-    return  b == 0;
+    return memcmp(&left, &right, sizeof(GUID)) == 0;
 }
 #else
 #include <Windows.h>

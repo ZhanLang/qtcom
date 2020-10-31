@@ -7,11 +7,19 @@
 
 struct ClsdDefine
 {
-    CLSID clsid;
+    ClsdDefine(REFGUID _clsid, HRESULT (*pfunc)(const IID&, void**), const char* progid)
+    {
+        clsid = _clsid;
+        pfnGetClassObject = pfunc;
+        strcpy( ProgID, progid);
+    }
+
+    GUID clsid;
     HRESULT (*pfnGetClassObject)(const IID&, void**);
     char ProgID[MAX_PROGIDLEN];
 };
 
+extern std::vector<ClsdDefine> g_mapClassObject;
 
 #define BEGIN_CLIDMAP \
      std::vector<ClsdDefine> g_mapClassObject;
@@ -20,16 +28,16 @@ struct ClsdDefine
      class clsCNullObjcetUnkown{public:clsCNullObjcetUnkown(){ g_mapClassObject.push_back(ClsdDefine{CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, ""});}} impCNullObjcetUnkown;
 
 #define CLIDMAPENTRY(CID,CLASS) \
-    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine{CID, &TStdClsFactory<CLASS >::GetClassObject, ""});}} imp##CLASS;
+    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, ""));}} imp##CLASS;
 
 #define CLIDMAPENTRY_NOROT(CID,CLASS) \
-    {CID, &TClsFactory<CLASS >::GetClassObject, "")},
+ class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, ""));}} imp##CLASS;
 
 #define CLIDMAPENTRY_NOROT_PROGID(CID,CLASS,PROGID) \
-{CID, &TClsFactory< CLASS >::GetClassObject, PROGID},
+class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, PROGID));}} imp##CLASS;
 
 #define CLIDMAPENTRY_PROGID(CID,CLASS,PROGID) \
-    {CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID},
+    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID));}} imp##CLASS;
 
 
 #define CLIDMAPENTRY_END
@@ -113,29 +121,25 @@ public: // IMSClassFactory:
     // IMSClassFactory:
     STDMETHOD_(CLSID, GetAt)(LONG nIndex)
     {
-        //return this->g_mapClassObject[nIndex+1].clsid;
+        return g_mapClassObject[nIndex+1].clsid;
         return GUID_NULL;
     }
 
     STDMETHOD_(LONG, GetCount)()
     {
-
-        return 0;
-      //  LONG lCount = sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]);
-
-      //  return (lCount > 0)?lCount-1:0;
+        return g_mapClassObject.size();
     }
 
 
     STDMETHOD_(const char*, ProgIDFromCLSID)(REFCLSID clsid)
     {
-       // for(int i = 1; i < sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]); ++i)
-       // {
-       //     if(clsid == g_mapClassObject[i].clsid)
-        //    {
-        //        return g_mapClassObject[i].ProgID;
-        //    }
-        //}
+        for(int i = 1; g_mapClassObject.size(); ++i)
+        {
+            if(clsid == g_mapClassObject[i].clsid)
+            {
+                return g_mapClassObject[i].ProgID;
+            }
+        }
         return "";
     }
 
