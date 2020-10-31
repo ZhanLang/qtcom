@@ -13,9 +13,9 @@
 
 
 #define DEFINE_ALL_EXPORTFUN \
-        EXPORT_API DllGetClassObject(IN REFCLSID rclsid, IN REFIID riid, OUT LPVOID FAR* ppv)\
+        EXPORT_API DllGetClassObject(REFCLSID rclsid,  REFIID riid,  LPVOID* ppv)\
 {\
-        for(size_t i = 0; i < sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]); ++i)\
+        for(size_t i = 0; i < g_mapClassObject.size(); ++i)\
         {\
                 if(rclsid == g_mapClassObject[i].clsid)\
                 {\

@@ -30,6 +30,8 @@ HEADERS += \
     comstd.h        \
     clsfactory.h    \
     comloader.h     \
+    clsexport.h
+
 
 TRANSLATIONS += \
     qtcom_zh_CN.ts

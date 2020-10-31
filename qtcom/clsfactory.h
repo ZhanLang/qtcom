@@ -1,16 +1,50 @@
 #ifndef __CLS_FACTORY_H__
 #define __CLS_FACTORY_H__
 
+#include <vector>
 #include "comiface.h"
 #include "comstd.h"
+
+struct ClsdDefine
+{
+    CLSID clsid;
+    HRESULT (*pfnGetClassObject)(const IID&, void**);
+    char ProgID[MAX_PROGIDLEN];
+};
+
+
+#define BEGIN_CLIDMAP \
+     std::vector<ClsdDefine> g_mapClassObject;
+
+#define CLIDMAPENTRY_BEGIN \
+     class clsCNullObjcetUnkown{public:clsCNullObjcetUnkown(){ g_mapClassObject.push_back(ClsdDefine{CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, ""});}} impCNullObjcetUnkown;
+
+#define CLIDMAPENTRY(CID,CLASS) \
+    class cls##CLASS{public:cls##CLASS(){ g_mapClassObject.push_back(ClsdDefine{CID, &TStdClsFactory<CLASS >::GetClassObject, ""});}} imp##CLASS;
+
+#define CLIDMAPENTRY_NOROT(CID,CLASS) \
+    {CID, &TClsFactory<CLASS >::GetClassObject, "")},
+
+#define CLIDMAPENTRY_NOROT_PROGID(CID,CLASS,PROGID) \
+{CID, &TClsFactory< CLASS >::GetClassObject, PROGID},
+
+#define CLIDMAPENTRY_PROGID(CID,CLASS,PROGID) \
+    {CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID},
+
+
+#define CLIDMAPENTRY_END
+
+#define END_CLIDMAP ;
 
 template<class CLS, class IFactory = IClassFactory>
 class TClsFactory : public IFactory, public CUnknownImp
 {
 public: // IMSBase:
-    UNKNOWN_IMP1(IClassFactory);
+    UNKNOWN_IMP1(IClassFactory)
 
+    static std::vector<ClsdDefine> g_mapClassObject;
 public:
+
     // IClassFactory
     STDMETHOD (CreateInstance)(
         /* [unique][in] */ IMSBase *punkOuter,
@@ -28,21 +62,17 @@ public:
 public:
     static HRESULT create_instance(IMSBase *punkOuter, const IID& riid, void **ppv)
     {
+        RASSERT(ppv, E_INVALIDARG);
+
+
         *ppv = 0;
-        // aggregation validate:
-        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG);
-        // create new object/aggregation:
+        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG)
         sentry<CLS*> p(new CLS);
-        RASSERT(p, E_UNEXPECTED);
-        ((IUnknown_Nondelegate*)(CLS*)p)->AddRef_Nondelegate(); // nondelegation, protect reference count
-        if(punkOuter)
-        {
-            CUnknownImp_Inner* pInner = (CUnknownImp_Inner*)(p.m_p);
-            RFAILED(pInner->init_class_inner(punkOuter));
-        }
-        HRESULT hr = ((IUnknown_Nondelegate*)(CLS*)p)->QueryInterface_Nondelegate(riid, ppv);
-        ((IUnknown_Nondelegate*)p.detach())->Release_Nondelegate(); // nondelegation, balance reference count or destroy.
-        return hr;
+        RASSERT(p, E_UNEXPECTED)
+        RFAILED(p->init_class(INULL, punkOuter))
+        RFAILED(p->QueryInterface(riid, ppv))
+        p.detach();
+        return S_OK;
     }
 
     static HRESULT lock_server(BOOL /*fLock*/)
@@ -61,7 +91,7 @@ template<class CLS>
 class TStdClsFactory : public TClsFactory<CLS, IMSClassFactory>
 {
 public: // IMSBase:
-    UNKNOWN_IMP2(IMSClassFactory, IClassFactory);
+    UNKNOWN_IMP2(IMSClassFactory, IClassFactory)
 
 public: // IMSClassFactory:
     STDMETHOD(CreateInstance)(IMSBase *prot, IMSBase *punkOuter, const IID& riid, void **ppv)
@@ -83,43 +113,41 @@ public: // IMSClassFactory:
     // IMSClassFactory:
     STDMETHOD_(CLSID, GetAt)(LONG nIndex)
     {
-        return g_mapClassObject[nIndex+1].clsid;
+        //return this->g_mapClassObject[nIndex+1].clsid;
     }
 
     STDMETHOD_(LONG, GetCount)()
     {
-        LONG lCount = sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]);
+      //  LONG lCount = sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]);
 
-        return (lCount > 0)?lCount-1:0;
+      //  return (lCount > 0)?lCount-1:0;
     }
 
 
-    STDMETHOD_(LPCTSTR, ProgIDFromCLSID)(REFCLSID clsid)
+    STDMETHOD_(const char*, ProgIDFromCLSID)(REFCLSID clsid)
     {
-        for(size_t i = 1; i < sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]); ++i)
-        {
-            if(clsid == g_mapClassObject[i].clsid)
-            {
-                return g_mapClassObject[i].ProgID;
-            }
-        }
-        return _T("");
+       // for(int i = 1; i < sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]); ++i)
+       // {
+       //     if(clsid == g_mapClassObject[i].clsid)
+        //    {
+        //        return g_mapClassObject[i].ProgID;
+        //    }
+        //}
+        return "";
     }
 
 public:
     static HRESULT create_instance(IMSBase *prot, IMSBase *punkOuter, const IID& riid, void **ppv)
     {
+        RASSERT(ppv, E_INVALIDARG);
         *ppv = 0;
-        // aggregation validate:
-        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG);
-        // create new object/aggregation:
+        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG)
         sentry<CLS*> p(new CLS);
-        RASSERT(p, E_UNEXPECTED);
-        ((IUnknown_Nondelegate*)(CLS*)p)->AddRef_Nondelegate(); // nondelegation, protect reference count
-        RFAILED(p->init_class(prot, punkOuter));
-        HRESULT hr = ((IUnknown_Nondelegate*)(CLS*)p)->QueryInterface_Nondelegate(riid, ppv);
-        ((IUnknown_Nondelegate*)p.detach())->Release_Nondelegate(); // nondelegation, balance reference count or destroy.
-        return hr;
+        RASSERT(p, E_UNEXPECTED)
+        RFAILED(p->init_class(prot, punkOuter))
+        RFAILED(p->QueryInterface(riid, ppv))
+        p.detach();
+        return S_OK;
     }
 
     static HRESULT GetClassObject(const IID& riid, void **ppv)
@@ -129,27 +157,5 @@ public:
 };
 
 
-#define BEGIN_CLIDMAP \
-    static const struct{ CLSID clsid; HRESULT (*pfnGetClassObject)(const IID&, void**);TCHAR ProgID[MAX_PROGIDLEN];} g_mapClassObject[] = {
-
-#define CLIDMAPENTRY_BEGIN \
-    {CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, _T("")},
-
-#define CLIDMAPENTRY(CID,CLASS) \
-    {CID, &TStdClsFactory<CLASS >::GetClassObject, _T("")},
-
-#define CLIDMAPENTRY_NOROT(CID,CLASS) \
-    {CID, &TClsFactory<CLASS >::GetClassObject, _T("")},
-
-#define CLIDMAPENTRY_NOROT_PROGID(CID,CLASS,PROGID) \
-{CID, &TClsFactory< CLASS >::GetClassObject, PROGID},
-
-#define CLIDMAPENTRY_PROGID(CID,CLASS,PROGID) \
-    {CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID},
-
-
-#define CLIDMAPENTRY_END
-
-#define END_CLIDMAP };
 
 #endif

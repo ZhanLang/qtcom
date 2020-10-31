@@ -1,25 +1,20 @@
 #ifndef __COM_STD_H__
 #define __COM_STD_H__
-#include <tchar.h>
 #define MAX_PROGIDLEN	100
 
 #include<atomic>
+#include <string.h>
+#include "guidfun.h"
 #include "comiface.h"
 #include "comptr.h"
 
-
-//////////////////////////////////////////////////////////////////////////
-inline bool operator < (const GUID& left, const GUID& right)
-{
-	return memcmp(&left, &right, sizeof(GUID)) < 0;
-}
 
 class CUnknownImp
 {
 public:
     std::atomic<ULONG> m_RefCount;
-	CUnknownImp(): m_RefCount(0) {}
-	virtual ~CUnknownImp(){}
+    CUnknownImp(): m_RefCount(0) {}
+    virtual ~CUnknownImp(){}
 };
 
 
@@ -27,7 +22,7 @@ public:
 
 
 #define QIBEGIN	\
-	STDMETHOD(QueryInterface)(REFGUID riid, void **ppv) {
+        STDMETHOD(QueryInterface)(const IID&  riid, void **ppv) {
 
 #define QIUNKNOWN	\
 	if(re_uuidof(IMSBase) == riid) { *ppv = static_cast<IMSBase*>(this); AddRef(); return S_OK; }
@@ -76,12 +71,12 @@ public:
 
 
 #define ADDREF	\
-	STDMETHOD_(ULONG, AddRef)()	\
-    {return m_RefCount++; }
+    STDMETHOD_(ULONG, AddRef)()	\
+    {return this->m_RefCount++; }
 
 #define RELEASE	\
-	STDMETHOD_(ULONG, Release)()	\
-    { m_RefCount--; if(m_RefCount) return m_RefCount; delete this; return 0; }
+    STDMETHOD_(ULONG, Release)()	\
+       { this->m_RefCount--; if(this->m_RefCount) return this->m_RefCount; delete this; return 0; }
 
 #endif
 
@@ -292,8 +287,8 @@ public:
 class CNullObjcetUnkown :public IMSBase, private CUnknownImp
 {
 public:
-    UNKNOWN_IMP1(IMSBase);
 
+    UNKNOWN_IMP1(IMSBase);
     // std factory invoke:
     STDMETHOD(init_class)(IMSBase* /*prot*/, IMSBase* punkOuter)
     {
