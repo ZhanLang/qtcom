@@ -22,7 +22,8 @@ public:
     HRESULT (*pfnGetClassObject)(const IID&, void**);
     char ProgID[MAX_PROGIDLEN];
 };
-//extern
+
+extern std::vector<ClsdDefine> g_mapClassObject;
 
 #define BEGIN_CLIDMAP \
 std::vector<ClsdDefine> g_mapClassObject;\
