@@ -20,17 +20,21 @@ SOURCES += \
     qtcom.cpp
 
 HEADERS += \
-    qtcom_global.h \
-    mscomdef.h \
-    qtcom.h \
-    mscomptr.h \
-    mscombase.h \
-    guidfun.h
-
+    qtcom_global.h  \
+    comdef.h        \
+    qtcom.h         \
+    comptr.h        \
+    combase.h       \
+    guidfun.h       \
+    comiface.h      \
+    comstd.h        \
+    clsfactory.h    \
+    comloader.h     \
 
 TRANSLATIONS += \
     qtcom_zh_CN.ts
 
+DEF_FILE += dllexports.def
 # Default rules for deployment.
 unix {
     target.path = /usr/lib

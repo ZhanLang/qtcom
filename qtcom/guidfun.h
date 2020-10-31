@@ -4,8 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "msuuid.h"
-#include "mscomdef.h"
+#include "comdef.h"
 
 
 #define GUID_SLEN	40

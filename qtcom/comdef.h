@@ -29,9 +29,11 @@ typedef const CLSID& REFCLSID;
 #define EXTERN_C extern "C"
 
 static GUID GUID_NULL = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0 ,0}};
-
+#else
+#include <Windows.h>
 #endif
 #define RFAILED(x) { HRESULT _h_r_ = (x); if(FAILED(_h_r_)) return _h_r_; }
+#define RASSERT(x, _h_r_) { if(!(x)) return _h_r_; }
 #define __countof(x) (sizeof(x) / sizeof(x[0]))
 
 #ifndef WIN32

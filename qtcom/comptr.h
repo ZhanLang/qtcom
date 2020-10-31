@@ -2,8 +2,6 @@
 #ifndef _RE_MSCOMPTR_H_
 #define _RE_MSCOMPTR_H_
 
-namespace mscom {;
-
 struct default_sentry
 {
 	static void* default_value() { return 0; }
@@ -84,8 +82,6 @@ struct com_ptr : sentry<I*, co_interface_sentry>
 	template<class U>
 		com_ptr& operator = (U *p) { if((void*)m_p == (void*)p) return *this; base::operator=(0); if(p && FAILED(p->QueryInterface(re_uuidof(I), (void**)&m_p))) m_p = 0; return *this; }
 };
-
-} //namespace mscom
 
 
 #endif // duplicate inclusion protection
