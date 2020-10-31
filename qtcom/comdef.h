@@ -101,15 +101,14 @@ inline bool operator < (const GUID& left, const GUID& right)
 
 #ifndef WIN32
 template <class T>
-const GUID&  _luuidof( )
+inline const GUID& _luuidof( )
 {
-    static GUID guid = GUID_NULL;
-    return guid;
+    return GUID_NULL;
 }
 
 #define MS_DEFINE_IID(iface, uuid_string)	\
 template<> \
-const GUID& _luuidof<iface>( )\
+inline const GUID& _luuidof<iface>( )\
 {\
     static GUID guid = S2GUIDA(uuid_string);\
     return guid;\

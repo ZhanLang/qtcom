@@ -5,9 +5,6 @@
 #include "comiface.h"
 #include "comstd.h"
 
-
-
-
 class ClsdDefine
 {
 public:
@@ -26,7 +23,7 @@ public:
 extern std::vector<ClsdDefine> g_mapClassObject;
 
 #define BEGIN_CLIDMAP \
-std::vector<ClsdDefine> g_mapClassObject;\
+    std::vector<ClsdDefine> g_mapClassObject;\
 
 #define CLIDMAPENTRY_BEGIN \
     class CLSIDExport{\
@@ -140,7 +137,6 @@ public: // IMSClassFactory:
 
     STDMETHOD_(const char*, ProgIDFromCLSID)(REFCLSID clsid)
     {
-
         for(int i = 1; g_mapClassObject.size(); ++i)
         {
             if(clsid == g_mapClassObject[i].clsid)

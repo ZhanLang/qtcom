@@ -36,7 +36,7 @@ HEADERS += \
 TRANSLATIONS += \
     qtcom_zh_CN.ts
 
-#DEF_FILE += dllexports.def
+DEF_FILE += dllexports.def
 # Default rules for deployment.
 unix {
     target.path = /usr/lib
