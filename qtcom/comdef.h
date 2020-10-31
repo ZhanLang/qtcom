@@ -41,6 +41,12 @@ typedef void* LPVOID;
 #define EXTERN_C extern "C"
 
 static GUID GUID_NULL = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0 ,0}};
+
+inline bool operator == (const GUID& left, const GUID& right)
+{
+    int b = memcmp(&left, &right, sizeof(GUID));
+    return  b == 0;
+}
 #else
 #include <Windows.h>
 #endif
@@ -92,11 +98,7 @@ inline bool operator < (const GUID& left, const GUID& right)
 {
     return memcmp(&left, &right, sizeof(GUID)) < 0;
 }
-inline bool operator == (const GUID& left, const GUID& right)
-{
-    int b = memcmp(&left, &right, sizeof(GUID));
-    return  b == 0;
-}
+
 
 #ifndef WIN32
 template <class T>

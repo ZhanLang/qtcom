@@ -9,7 +9,7 @@
 
 #define GUID_SLEN	40
 
-#define USES_GUIDCONVERSIONW wchar lpGuidBuf[GUID_SLEN];
+#define USES_GUIDCONVERSIONW wchar_t lpGuidBuf[GUID_SLEN];
 #define USES_GUIDCONVERSIONA char lpGuidBuf[GUID_SLEN];
 
 #ifdef UNICODE

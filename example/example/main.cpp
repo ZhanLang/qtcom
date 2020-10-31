@@ -49,12 +49,12 @@ CLIDMAPENTRY_END
 END_CLIDMAP
 //DEFINE_ALL_EXPORTFUN
 
-HRESULT DllGetClassObject(REFCLSID rclsid,  REFIID riid,  LPVOID* ppv)
+EXPORT_API DllGetClassObject(REFCLSID rclsid,  REFIID riid,  LPVOID* ppv)
 {
     for(size_t i = 0; i < g_mapClassObject.size(); i++)
     {
         GUID g = g_mapClassObject[i].clsid;
-        USES_GUIDCONVERSION
+        USES_GUIDCONVERSIONA
         GUIDToSA(g, lpGuidBuf, GUID_SLEN);
         std::string s; s+= lpGuidBuf;
 

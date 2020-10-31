@@ -114,10 +114,13 @@ public: // IMSClassFactory:
     STDMETHOD_(CLSID, GetAt)(LONG nIndex)
     {
         //return this->g_mapClassObject[nIndex+1].clsid;
+        return GUID_NULL;
     }
 
     STDMETHOD_(LONG, GetCount)()
     {
+
+        return 0;
       //  LONG lCount = sizeof(g_mapClassObject)/sizeof(g_mapClassObject[0]);
 
       //  return (lCount > 0)?lCount-1:0;
