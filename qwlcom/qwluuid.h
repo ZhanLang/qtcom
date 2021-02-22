@@ -9,7 +9,7 @@ inline const GUID& _luuidof( )
     return GUID_NULL;
 }
 
-#define MS_DEFINE_IID(iface, uuid_string)	\
+#define WL_DEFINE_IID(iface, uuid_string)	\
 template<> \
 inline const GUID& _luuidof<iface>( )\
 {\
@@ -20,7 +20,7 @@ inline const GUID& _luuidof<iface>( )\
 #define __uuidof(X) _luuidof<X>()
 #endif
 
-#define MS_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+#define WL_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
     EXTERN_C const GUID  name \
     = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 
