@@ -4,10 +4,9 @@
 
 #include<atomic>
 #include <string.h>
-#include "guidfun.h"
-#include "comiface.h"
-#include "comptr.h"
-
+#include "wluuid.h"
+#include "wliunknown.h"
+#include "wlcomptr.h"
 
 class CUnknownImp
 {
@@ -25,10 +24,10 @@ public:
         STDMETHOD(QueryInterface)(const IID&  riid, void **ppv) {
 
 #define QIUNKNOWN	\
-	if(re_uuidof(IMSBase) == riid) { *ppv = static_cast<IMSBase*>(this); AddRef(); return S_OK; }
+    if(re_uuidof(IWLComBase) == riid) { *ppv = static_cast<IWLComBase*>(this); AddRef(); return S_OK; }
 
 #define QIUNKNOWN_(icast)	\
-	if(re_uuidof(IMSBase) == riid) { *ppv = static_cast<IMSBase*>(static_cast<icast*>(this)); AddRef(); return S_OK; }
+    if(re_uuidof(IWLComBase) == riid) { *ppv = static_cast<IWLComBase*>(static_cast<icast*>(this)); AddRef(); return S_OK; }
 
 #define QIENTRY(iface)	\
 	if(re_uuidof(iface) == riid) { *ppv = static_cast<iface*>(this); AddRef(); return S_OK; }
@@ -169,8 +168,8 @@ public:
 	ULONG m_RefCount;
 	CUnknownImp_Inner(): m_RefCount(0), m_punkOuter(0) {}
 public:
-	IMSBase *m_punkOuter;
-	HRESULT init_class_inner(IMSBase *punkOuter)
+    IWLComBase *m_punkOuter;
+    HRESULT init_class_inner(IWLComBase *punkOuter)
 	{
 		m_punkOuter = punkOuter;
 		return S_OK;
@@ -182,10 +181,10 @@ public:
 	STDMETHOD(QueryInterface_Nondelegate)(REFGUID riid, void **ppv) {
 
 #define QIUNKNOWN_NONDELEGATE	\
-	if(re_uuidof(IMSBase) == riid) { *ppv = static_cast<IUnknown_Nondelegate*>(this); AddRef_Nondelegate(); return S_OK; }
+    if(re_uuidof(IWLComBase) == riid) { *ppv = static_cast<IUnknown_Nondelegate*>(this); AddRef_Nondelegate(); return S_OK; }
 
 #define QIUNKNOWN_NONDELEGATE_(icast)	\
-	if(re_uuidof(IMSBase) == riid) { *ppv = static_cast<IUnknown_Nondelegate*>(static_cast<icast*>(this)); AddRef_Nondelegate(); return S_OK; }
+    if(re_uuidof(IWLComBase) == riid) { *ppv = static_cast<IUnknown_Nondelegate*>(static_cast<icast*>(this)); AddRef_Nondelegate(); return S_OK; }
 
 #define ADDREF_NONDELEGATE	\
 	STDMETHOD_(ULONG, AddRef_Nondelegate)()	\
@@ -284,18 +283,18 @@ public:
 	UNKNOWN_OUTER_IMP_SPEC_(i1, QIENTRY(i1) QIENTRY(i2) QIENTRY(i3) QIENTRY(i4) QIENTRY(i5) QIENTRY(i6) QIENTRY(i7) )
 	
 
-class CNullObjcetUnkown :public IMSBase, private CUnknownImp
+class CNullObjcetUnkown :public IWLComBase, private CUnknownImp
 {
 public:
 
-    UNKNOWN_IMP1(IMSBase);
+    UNKNOWN_IMP1(IWLComBase);
     // std factory invoke:
-    STDMETHOD(init_class)(IMSBase* /*prot*/, IMSBase* punkOuter)
+    STDMETHOD(init_class)(IWLComBase* /*prot*/, IWLComBase* punkOuter)
     {
         return !punkOuter ? S_OK : E_INVALIDARG;
     }
 
-    STDMETHOD(init_class_inner)(IMSBase* punkOuter)
+    STDMETHOD(init_class_inner)(IWLComBase* punkOuter)
     {
         return !punkOuter ? S_OK : E_INVALIDARG;
     }
