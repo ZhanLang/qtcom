@@ -2,8 +2,7 @@
 #ifndef __MSPROPERTY_TEMPLATE_IMP_H__
 #define __MSPROPERTY_TEMPLATE_IMP_H__
 
-namespace msdk {
-namespace mscom {
+namespace qtcom {
 //////////////////////////////////////////////////////////////////////////
 // trivial variant implement
 template<class T>
@@ -406,7 +405,6 @@ VariantEntryTable g_tblVariantEntry[] =
 	VARIANT_ENTRY_EMPTY,
 };
 
-}//namespace mscom
-}//namespace msdk
+}//namespace qtcom
 
 #endif

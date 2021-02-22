@@ -2,17 +2,20 @@
 #define __CLS_FACTORY_H__
 
 #include <vector>
-#include "comiface.h"
-#include "comstd.h"
+#include "qwlinterface.h"
+#include "qwlcomstd.h"
 
-class ClsdDefine
+using namespace qtcom ;
+
+
+class classdef
 {
 public:
-    ClsdDefine(REFGUID _clsid, HRESULT (*pfunc)(const IID&, void**), const char* progid)
+    classdef(REFGUID _clsid, HRESULT (*pfunc)(const IID&, void**), const char* progid)
     {
         clsid = _clsid;
         pfnGetClassObject = pfunc;
-        strcpy( ProgID, progid);
+        strcpy_s( ProgID,MAX_PROGIDLEN, progid);
     }
 
     GUID clsid;
@@ -20,29 +23,29 @@ public:
     char ProgID[MAX_PROGIDLEN];
 };
 
-extern std::vector<ClsdDefine> g_mapClassObject;
+extern std::vector<classdef> g_mapClassObject;
 
 #define BEGIN_CLIDMAP \
-    std::vector<ClsdDefine> g_mapClassObject;\
+    std::vector<classdef> g_mapClassObject;\
 
 #define CLIDMAPENTRY_BEGIN \
     class CLSIDExport{\
         public:\
         CLSIDExport()\
         {\
-            g_mapClassObject.push_back(ClsdDefine(CLSID_MSClassFactory,&TStdClsFactory<CNullObjcetUnkown>::GetClassObject, ""));
+            g_mapClassObject.push_back(classdef(CLSID_WLClassFactory,&TStdClsFactory<QNullObjcetUnkown>::GetClassObject, ""));
 
 #define CLIDMAPENTRY(CID,CLASS) \
-     g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, ""));
+     g_mapClassObject.push_back(classdef(CID, &TStdClsFactory<CLASS >::GetClassObject, ""));
 
 #define CLIDMAPENTRY_NOROT(CID,CLASS) \
-    g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, ""));
+    g_mapClassObject.push_back(classdef(CID, &TClsFactory<CLASS >::GetClassObject, ""));
 
 #define CLIDMAPENTRY_NOROT_PROGID(CID,CLASS,PROGID) \
-    g_mapClassObject.push_back(ClsdDefine(CID, &TClsFactory<CLASS >::GetClassObject, PROGID));
+    g_mapClassObject.push_back(classdef(CID, &TClsFactory<CLASS >::GetClassObject, PROGID));
 
 #define CLIDMAPENTRY_PROGID(CID,CLASS,PROGID) \
-    g_mapClassObject.push_back(ClsdDefine(CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID));
+    g_mapClassObject.push_back(classdef(CID, &TStdClsFactory<CLASS >::GetClassObject, PROGID));
 
 
 #define CLIDMAPENTRY_END }}; CLSIDExport globalExport;
@@ -52,13 +55,13 @@ extern std::vector<ClsdDefine> g_mapClassObject;
 template<class CLS, class IFactory = IClassFactory>
 class TClsFactory : public IFactory, public CUnknownImp
 {
-public: // IMSBase:
+public: // IWLComBase:
     UNKNOWN_IMP1(IClassFactory)
 public:
 
     // IClassFactory
     STDMETHOD (CreateInstance)(
-        /* [unique][in] */ IMSBase *punkOuter,
+        /* [unique][in] */ IWLComBase *punkOuter,
         /* [in] */ REFIID riid,
         /* [iid_is][out] */ void **ppv)
     {
@@ -71,17 +74,17 @@ public:
     }
 
 public:
-    static HRESULT create_instance(IMSBase *punkOuter, const IID& riid, void **ppv)
+    static HRESULT create_instance(IWLComBase *punkOuter, const IID& riid, void **ppv)
     {
         RASSERT(ppv, E_INVALIDARG);
 
 
         *ppv = 0;
-        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG)
+        RASSERT(!punkOuter || re_uuidof(IWLComBase) == riid, E_INVALIDARG);
         sentry<CLS*> p(new CLS);
-        RASSERT(p, E_UNEXPECTED)
-        RFAILED(p->init_class(INULL, punkOuter))
-        RFAILED(p->QueryInterface(riid, ppv))
+        RASSERT(p, E_UNEXPECTED);
+        RFAILED(p->init_class(INULL, punkOuter));
+        RFAILED(p->QueryInterface(riid, ppv));
         p.detach();
         return S_OK;
     }
@@ -99,24 +102,24 @@ public:
 
 
 template<class CLS>
-class TStdClsFactory : public TClsFactory<CLS, IMSClassFactory>
+class TStdClsFactory : public TClsFactory<CLS, IWLClassFactory>
 {
-public: // IMSBase:
-    UNKNOWN_IMP2(IMSClassFactory, IClassFactory)
+public: // IWLComBase:
+    UNKNOWN_IMP2(IWLClassFactory, IClassFactory)
 
 public: // IMSClassFactory:
-    STDMETHOD(CreateInstance)(IMSBase *prot, IMSBase *punkOuter, const IID& riid, void **ppv)
+    STDMETHOD(CreateInstance)(IWLComBase *prot, IWLComBase *punkOuter, const IID& riid, void **ppv)
     {
         return create_instance(prot, punkOuter, riid, ppv);
     }
 
     // std factory invoke:
-    STDMETHOD(init_class)(IMSBase* prot, IMSBase* punkOuter)
+    STDMETHOD(init_class)(IWLComBase* prot, IWLComBase* punkOuter)
     {
         return !punkOuter ? S_OK : E_INVALIDARG;
     }
 
-    STDMETHOD(init_class_inner)(IMSBase* punkOuter)
+    STDMETHOD(init_class_inner)(IWLComBase* punkOuter)
     {
         return !punkOuter ? S_OK : E_INVALIDARG;
     }
@@ -124,8 +127,11 @@ public: // IMSClassFactory:
     // IMSClassFactory:
     STDMETHOD_(CLSID, GetAt)(LONG nIndex)
     {
+        if( g_mapClassObject.size() < nIndex )
+            return GUID_NULL;
+
         return g_mapClassObject[nIndex+1].clsid;
-        return GUID_NULL;
+
     }
 
     STDMETHOD_(LONG, GetCount)()
@@ -149,15 +155,15 @@ public: // IMSClassFactory:
     }
 
 public:
-    static HRESULT create_instance(IMSBase *prot, IMSBase *punkOuter, const IID& riid, void **ppv)
+    static HRESULT create_instance(IWLComBase *prot, IWLComBase *punkOuter, const IID& riid, void **ppv)
     {
         RASSERT(ppv, E_INVALIDARG);
         *ppv = 0;
-        RASSERT(!punkOuter || re_uuidof(IMSBase) == riid, E_INVALIDARG)
+        RASSERT(!punkOuter || re_uuidof(IWLComBase) == riid, E_INVALIDARG);
         sentry<CLS*> p(new CLS);
-        RASSERT(p, E_UNEXPECTED)
-        RFAILED(p->init_class(prot, punkOuter))
-        RFAILED(p->QueryInterface(riid, ppv))
+        RASSERT(p, E_UNEXPECTED);
+        RFAILED(p->init_class(prot, punkOuter));
+        RFAILED(p->QueryInterface(riid, ppv));
         p.detach();
         return S_OK;
     }
@@ -167,7 +173,6 @@ public:
         return TStdClsFactory<TStdClsFactory<CLS> >::create_instance(0, 0, riid, ppv);
     }
 };
-
 
 
 #endif

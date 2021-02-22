@@ -3,7 +3,7 @@
 
 #include "qtcom_global.h"
 
-class QTCOM_EXPORT Qtcom
+class Qtcom
 {
 public:
     Qtcom();

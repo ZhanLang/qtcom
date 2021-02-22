@@ -1,14 +1,7 @@
-#include"wltype.h"
 
-inline bool operator == (const GUID& left, const GUID& right)
-{
-    return memcmp(&left, &right, sizeof(GUID)) == 0;
-}
-
-inline bool operator < (const GUID& left, const GUID& right)
-{
-    return memcmp(&left, &right, sizeof(GUID)) < 0;
-}
+#ifndef __QWLTYPE_H__
+#define __QWLTYPE_H__
+#include"qwltype.h"
 
 
 static GUID S2GUIDA(const char* lpString, bool bHaveBracket = true)
@@ -51,3 +44,4 @@ static GUID S2GUIDA(const char* lpString, bool bHaveBracket = true)
 
     return guid;
 };
+#endif

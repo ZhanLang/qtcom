@@ -1,7 +1,10 @@
-#include"wltype.h"
-#include"wlguidfn.h"
+#ifndef __QWLUUID_H__
+#define __QWLUUID_H__
+
+#include"qwltype.h"
+#include"qwlguidfn.h"
 #ifdef WIN32
-#define MS_DEFINE_IID(iface, uuid_string)	struct __declspec(uuid(uuid_string)) iface
+#define QWL_DEFINE_IID(iface, uuid_string)	struct __declspec(uuid(uuid_string)) iface
 #else
 template <class T>
 inline const GUID& _luuidof( )
@@ -20,9 +23,11 @@ inline const GUID& _luuidof<iface>( )\
 #define __uuidof(X) _luuidof<X>()
 #endif
 
-#define WL_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+#define QWL_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
     EXTERN_C const GUID  name \
     = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 
 #define re_uuidof(iface)	__uuidof(iface)
-static GUID GUID_NULL = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0 ,0}};
+
+
+#endif

@@ -4,9 +4,9 @@
 
 #include<atomic>
 #include <string.h>
-#include "wluuid.h"
-#include "wliunknown.h"
-#include "wlcomptr.h"
+#include "qwluuid.h"
+#include "qwlinterface.h"
+#include "qwlcomptr.h"
 
 class CUnknownImp
 {
@@ -159,14 +159,14 @@ struct INoRefCom : public IUnknown
 	STDMETHOD_(ULONG,Release)(void){return 1;}
 	STDMETHOD(QueryInterface)(const IID & Want_IID,void **ppObject){return E_NOTIMPL;}
 };
-MS_DEFINE_IID(INoRefCom,"{FD00FF7A-1429-4310-80DB-BF33C04211BE}");
+QWL_DEFINE_IID(INoRefCom,"{FD00FF7A-1429-4310-80DB-BF33C04211BE}");
 
 
-class CUnknownImp_Inner
+class QUnknownImp_Inner
 {
 public:
 	ULONG m_RefCount;
-	CUnknownImp_Inner(): m_RefCount(0), m_punkOuter(0) {}
+    QUnknownImp_Inner(): m_RefCount(0), m_punkOuter(0) {}
 public:
     IWLComBase *m_punkOuter;
     HRESULT init_class_inner(IWLComBase *punkOuter)
@@ -283,7 +283,7 @@ public:
 	UNKNOWN_OUTER_IMP_SPEC_(i1, QIENTRY(i1) QIENTRY(i2) QIENTRY(i3) QIENTRY(i4) QIENTRY(i5) QIENTRY(i6) QIENTRY(i7) )
 	
 
-class CNullObjcetUnkown :public IWLComBase, private CUnknownImp
+class QNullObjcetUnkown :public IWLComBase, private CUnknownImp
 {
 public:
 

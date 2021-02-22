@@ -1,14 +1,15 @@
 
 #ifndef _IMSTPROPERTY_H
 #define _IMSTPROPERTY_H
+#include<map>
+#include<string>
+#include"qwlinterface.h"
+#include "qwllock.h"
+#include "tproperty.impl.h"
 
-#include <SyncObject/criticalsection.h>
-#include <mscom/tproperty.impl.h>
+namespace qtcom {
 
-namespace msdk {
-namespace mscom {
-
-	template<class T,class LockType, class KeyLess = less<T>>
+    template<class T,class LockType, class KeyLess = std::less<T>>
 	class TProperty_Impl
 	{
 	public: // __tCLSID_CSrvProperty2<T>:
@@ -136,14 +137,14 @@ namespace mscom {
 		typedef std::map<T, PROPVARIANT, KeyLess > PROPMAP;
 		PROPMAP m_map;
 
-		typedef CStackLockWrapper<LockType> SRVATUOLOCK;
+        typedef QStackLockWrapper<LockType> SRVATUOLOCK;
 		LockType m_lock;
 	};
 
 	
 
 	template<class IFace,
-			 class LockType = CNullCriticalSection, 
+             class LockType = QNullCriticalSection,
 			 class KeyLess = std::less<IFace::KeyType>, 
 			 class T = typename IFace::KeyType, 
 			 class P = const T&
@@ -151,7 +152,7 @@ namespace mscom {
 	class TProperty : public IFace
 		, public IUnknown_Nondelegate
 		, private TProperty_Impl<T, LockType, KeyLess>
-		, private CUnknownImp_Inner
+        , private QUnknownImp_Inner
 	{
 		typedef	TProperty_Impl<T,LockType, KeyLess>	Impl;
 	public: // IUnknown:
@@ -171,14 +172,13 @@ namespace mscom {
 	};
 
 
-typedef TProperty<IProperty, CNullCriticalSection, memless<CLSID> >	CProperty;
-typedef TProperty<IProperty, CAutoCriticalSection, memless<CLSID> >	CPropertyThread;
+typedef TProperty<IProperty, QNullCriticalSection, memless<CLSID> >	QProperty;
+typedef TProperty<IProperty, QAutoCriticalSection, memless<CLSID> >	QPropertyThread;
 
-typedef TProperty<IProperty2>	CProperty2;
-typedef TProperty<IProperty2, CAutoCriticalSection>	CProperty2Thread;
+typedef TProperty<IProperty2>	QProperty2;
+typedef TProperty<IProperty2, QAutoCriticalSection>	QProperty2Thread;
 
-typedef TProperty<IPropertyStr,CNullCriticalSection, strless<std::string>, std::string, LPCSTR>	CPropertyStr;
-typedef TProperty<IPropertyStr, CAutoCriticalSection, strless<std::string>, std::string,LPCSTR>	CPropertyStrThread;
-} //namespace mscom
-} //namespace msdk
+typedef TProperty<IPropertyStr,QNullCriticalSection, strless<std::string>, std::string, LPCSTR>	QPropertyStr;
+typedef TProperty<IPropertyStr, QAutoCriticalSection, strless<std::string>, std::string,LPCSTR>	QPropertyStrThread;
+} //namespace qtcom
 #endif // _IMSTPROPERTY_H

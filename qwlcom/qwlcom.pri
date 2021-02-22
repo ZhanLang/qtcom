@@ -1,11 +1,19 @@
 
 
 SOURCES += \
+    qtcom.cpp
 
 
 HEADERS += \
-    $$PWD/wltype.h \
-    wlresult.h \
-    wliunknown.h\
-    wluuid.h\
-    wlcomstd.h\
+    $$PWD/qwltype.h \
+    qwlresult.h \
+    qwliunknown.h\
+    qwluuid.h\
+    qwlcomstd.h\
+    qwlinterface.h\
+    qwlclsexp.h\
+    qtcomexp.h\
+    qwllock.h\
+    tproperty.h\
+    tproperty.impl.h
+

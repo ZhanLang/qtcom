@@ -1,4 +1,4 @@
-#include"wlcomype.h"
+#include"qwltype.h"
 #include<QString>
 template<typename  T>
 class QWLResultBase
@@ -35,7 +35,7 @@ public:
         return  code == 0;
     }
 
-    ULONG getCode(){
+    ULONG getCode() const{
         return code;
     }
 

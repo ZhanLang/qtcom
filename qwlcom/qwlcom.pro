@@ -24,7 +24,7 @@ INCLUDEPATH += ..\include
 TRANSLATIONS += \
     qtcom_zh_CN.ts
 
-include(wlcom.pri)
+include(qwlcom.pri)
 
 DEF_FILE += dllexports.def
 # Default rules for deployment.
