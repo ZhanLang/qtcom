@@ -2,8 +2,8 @@
 #define __COM_STD_H__
 #define MAX_PROGIDLEN	100
 
-#include<atomic>
-#include <string.h>
+#include <QAtomicInteger>
+
 #include "qwluuid.h"
 #include "qwlinterface.h"
 #include "qwlcomptr.h"
@@ -11,7 +11,7 @@
 class CUnknownImp
 {
 public:
-    std::atomic<ULONG> m_RefCount;
+   QAtomicInteger<int> m_RefCount;
     CUnknownImp(): m_RefCount(0) {}
     virtual ~CUnknownImp(){}
 };

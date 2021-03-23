@@ -1,15 +1,7 @@
 #include "qtcom.h"
+#include"qunknwn.h"
 
-#include"combase.h"
-#include"qwlinterface.h"
-#include "qwlcomptr.h"
-#include"qwlcomstd.h"
-#include"qtcomexp.h"
-#include"qwlclsexp.h"
-#include"guidfun.h"
-#include "tproperty.h"
-#include"tproperty.impl.h"
-
+/*
 using namespace qtcom;
 BEGIN_CLIDMAP
 CLIDMAPENTRY_BEGIN
@@ -21,3 +13,9 @@ CLIDMAPENTRY_BEGIN
     CLIDMAPENTRY_PROGID(CLSID_QPropertyStr_thread,  QPropertyStrThread, "PropertyStrThread.1")
 CLIDMAPENTRY_END
 DEFINE_ALL_EXPORTFUN
+*/
+
+QTCOM_EXPORT Qtcom::Qtcom()
+{
+
+}

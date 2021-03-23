@@ -34,6 +34,11 @@ inline bool operator < (const GUID& left, const GUID& right)
     return memcmp(&left, &right, sizeof(GUID)) < 0;
 }
 
+#define STDMETHOD(method) HRESULT __stdcall
+
+
+
+
 #define FAILED(hr) (((HRESULT)(hr)) < 0)
 
 #endif
@@ -45,3 +50,4 @@ inline bool operator < (const GUID& left, const GUID& right)
 #define RASSERTP(x, _h_r_) { if(NULL==(x)) return _h_r_; }
 
 #endif //__QWLTYPE_H__
+HRESULT

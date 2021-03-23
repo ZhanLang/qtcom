@@ -6,16 +6,7 @@
 # Remove it when you are finished editing this file.
 message("You are running qmake on a generated .pro file. This may not work!")
 
-CONFIG += ordered
+
 TEMPLATE = subdirs
-SUBDIRS =+ ./qwlcom/qwlcom.pro \
-./example/example/example.pro
-
-
-
-
-
-
-
-
-
+SUBDIRS += qwlcom/qwlcom.pro \
+    example/example.pro

@@ -1,9 +1,9 @@
-#ifndef QTCOM_H
+   #ifndef QTCOM_H
 #define QTCOM_H
 
 #include "qtcom_global.h"
 
-class Qtcom
+class QTCOM_EXPORT Qtcom
 {
 public:
     Qtcom();

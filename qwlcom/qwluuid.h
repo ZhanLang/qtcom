@@ -5,7 +5,9 @@
 #include"qwlguidfn.h"
 #ifdef WIN32
 #define QWL_DEFINE_IID(iface, uuid_string)	struct __declspec(uuid(uuid_string)) iface
+
 #else
+
 template <class T>
 inline const GUID& _luuidof( )
 {
