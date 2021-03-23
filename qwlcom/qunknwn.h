@@ -14,23 +14,28 @@
 #define QE_INVALIDARG                     (0x80070057L)
 #define QE_NOTIMPL                        (0x80004001L)
 #define QE_NOINTERFACE                    (0x80004002L)
+#define QE_UNEXPECTED                     (0x8000FFFFL)
+#define QE_NOTIMPL                        (0x80004001L)
 
-
-typedef QUuid IID;
+typedef QUuid QIID;
+typedef QUuid QCLSID;
 typedef ulong QHRESULT;
 
 #define QFAILED(hr) (((QHRESULT)(hr)) < 0)
+#define QRASSERT(x, _h_r_) { if(!(x)) return _h_r_; }
+#define QRFAILED(x) { QHRESULT _h_r_ = (x); if(QFAILED(_h_r_)) return _h_r_; }
 
 template <class T>
-inline const QUuid& _luuidof( )
+inline const QIID& _luuidof( )
 {
-    return QUuid();
+    static QIID iid = QIID();
+    return iid;
 }
 
 #define QT_DEFINE_IID(iface, uuid_string)\
 template<>\
-inline const QUuid& _luuidof<iface>( ){\
-    static QUuid guid = QUuid::fromString(QString::fromLatin1(uuid_string));\
+inline const QIID& _luuidof<iface>( ){\
+    static QIID guid = QUuid::fromString(QString::fromLatin1(uuid_string));\
     return guid;\
 }
 
@@ -44,7 +49,7 @@ struct QIUnknown
 {
     virtual ulong STDMETHODCALL AddRef() = 0;
     virtual ulong STDMETHODCALL Release() = 0;
-    virtual QHRESULT STDMETHODCALL QueryInterface(const QUuid& uuid, void  **ppvObject) = 0;
+    virtual QHRESULT STDMETHODCALL QueryInterface(const QIID& uuid, void  **ppvObject) = 0;
 };
 QT_DEFINE_IID(QIUnknown,"{00000000-0000-0000-C000-000000000046}");
 
@@ -53,19 +58,16 @@ QT_DEFINE_IID(QIUnknown,"{00000000-0000-0000-C000-000000000046}");
 struct QIClassFactory : public QIUnknown
 {
 public:
-    virtual QHRESULT STDMETHODCALL CreateInstance( QIUnknown *pUnkOuter,const QUuid& riid, void **ppvObject) = 0;
+    virtual QHRESULT STDMETHODCALL CreateInstance( QIUnknown *pUnkOuter,const QIID& iid, void **ppvObject) = 0;
     virtual QHRESULT STDMETHODCALL LockServer( bool fLock) = 0;
 };
 QT_DEFINE_IID(QIClassFactory,"{00000001-0000-0000-C000-000000000046}");
 
 
-struct QIClassFactoryEx: public QIClassFactory
+struct QIClassFactoryEx: public QIUnknown
 {
 public:
-    virtual QHRESULT   STDMETHODCALL CreateInstance(QIUnknown *prot, QIUnknown *punkOuter, const QUuid& riid, void **ppvObject) = 0;
-    virtual QUuid STDMETHODCALL GetAt(int nIndex) = 0;
-    virtual int   STDMETHODCALL GetCount() = 0;
-    virtual QString STDMETHODCALL ProgIDFromCLSID(const QUuid& clsid) = 0;
+    virtual QHRESULT STDMETHODCALL CreateInstance(QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
 };
 QT_DEFINE_IID(QIClassFactoryEx,"{6966E385-DBFA-4131-A29E-D0E9464F3F53}");
 

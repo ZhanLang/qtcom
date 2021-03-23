@@ -3,16 +3,16 @@
 
 #include<QAtomicInteger>
 #include"qunknwn.h"
-class CUnknownImp
+class QUnknownImp
 {
 public:
     QAtomicInteger<ulong> m_RefCount;
-    CUnknownImp(): m_RefCount(0) {}
-    virtual ~CUnknownImp(){}
+    QUnknownImp(): m_RefCount(0) {}
+    virtual ~QUnknownImp(){}
 };
 
 #define QIBEGIN	\
-        virtual QHRESULT STDMETHODCALL QueryInterface(const IID&  riid, void **ppv) {
+        virtual QHRESULT STDMETHODCALL QueryInterface(const QIID&  riid, void **ppv) {
 
 #define QIUNKNOWN	\
     if(qt_uuidof(QIUnknown) == riid) { *ppv = static_cast<QIUnknown*>(this); AddRef(); return QS_OK; }
@@ -118,7 +118,7 @@ struct QINoRefCom : public QIUnknown
 {
     virtual ulong STDMETHODCALL AddRef( ){return 1;}
     virtual ulong STDMETHODCALL Release(){return 1;}
-    virtual QHRESULT STDMETHODCALL QueryInterface(const QUuid & Want_IID,void **ppObject){return 1;}
+    virtual QHRESULT STDMETHODCALL QueryInterface(const QUuid & ,void **){return QE_UNEXPECTED;}
 };
 QT_DEFINE_IID(QINoRefCom,"{FD00FF7A-1429-4310-80DB-BF33C04211BE}");
 

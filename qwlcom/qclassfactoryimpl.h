@@ -4,11 +4,20 @@
 #include"qunknwnimpl.h"
 #include"qcomptr.h"
 
+#ifdef Q_OS_WIN
+#define QEXPORT_API __declspec(dllexport)
+#else
+#define QEXPORT_API
+#endif
+
+QHRESULT DllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls)
+
+
 template<class CLS, class IFactory = QIClassFactory>
 class QTClsFactory : public IFactory, public QUnknownImp
 {
 public: // QIUnknown:
-    UNKNOWN_IMP1(QIClassFactory)
+    UNKNOWN_IMP1_(IFactory)
 public:
 
     // IClassFactory
@@ -57,9 +66,6 @@ public:
 template<class CLS>
 class QTStdClsFactory : public QTClsFactory<CLS, QIClassFactoryEx>
 {
-public: // QIUnknown:
-    UNKNOWN_IMP2(QIClassFactoryEx, QIClassFactory)
-
 public:
     virtual QHRESULT STDMETHODCALL CreateInstance(QIUnknown *prot, QIUnknown *punkOuter, const QIID& riid, void **ppv)
     {

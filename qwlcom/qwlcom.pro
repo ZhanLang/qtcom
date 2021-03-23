@@ -16,6 +16,7 @@ RCC_DIR += ./GeneratedFiles
 TRANSLATIONS += qtcom_zh_CN.ts
 
 HEADERS += \
+    qclassfactoryimpl.h \
     qcomptr.h \
     qunknwn.h \
     qunknwnimpl.h
