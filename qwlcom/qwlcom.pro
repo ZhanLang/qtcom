@@ -18,5 +18,6 @@ TRANSLATIONS += qtcom_zh_CN.ts
 HEADERS += \
     qclassfactoryimpl.h \
     qcomptr.h \
+    qrunningobjecttable.h \
     qunknwn.h \
     qunknwnimpl.h

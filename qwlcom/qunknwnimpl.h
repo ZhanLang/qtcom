@@ -114,13 +114,13 @@ public:
     virtual int STDMETHODCALL Release_Nondelegate() = 0;
 };
 
-struct QINoRefCom : public QIUnknown
+struct QNoRefCom : public QIUnknown
 {
     virtual ulong STDMETHODCALL AddRef( ){return 1;}
     virtual ulong STDMETHODCALL Release(){return 1;}
     virtual QHRESULT STDMETHODCALL QueryInterface(const QUuid & ,void **){return QE_UNEXPECTED;}
 };
-QT_DEFINE_IID(QINoRefCom,"{FD00FF7A-1429-4310-80DB-BF33C04211BE}");
+
 
 
 class QUnknownImp_Inner

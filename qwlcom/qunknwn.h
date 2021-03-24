@@ -15,8 +15,8 @@
 #define QE_NOTIMPL                        (0x80004001L)
 #define QE_NOINTERFACE                    (0x80004002L)
 #define QE_UNEXPECTED                     (0x8000FFFFL)
-#define QE_NOTIMPL                        (0x80004001L)
-
+#define QE_NOTFIND                        (0x60004001L)
+#define QE_EXIST                          (0x60004002L)
 typedef QUuid QIID, QCLSID;
 typedef ulong QHRESULT;
 
@@ -26,6 +26,7 @@ typedef ulong QHRESULT;
 
 #define QSTDMETHOD(method) virtual QHRESULT STDMETHODCALL method
 #define QSTDMETHOD_(result,method) virtual result STDMETHODCALL method
+
 template <class T>
 inline const QIID& _luuidof( )
 {
@@ -58,6 +59,8 @@ QT_DEFINE_IID(QIUnknown,"{00000000-0000-0000-C000-000000000046}");
 
 struct QIRunningObjectTable : public QIUnknown
 {
+    QSTDMETHOD(QuickCreateInstance)(const QCLSID& clsid, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
+
     QSTDMETHOD(GetObject)(const QCLSID& clsid, const QIID& iid, void **ppunk) = 0;
 
     QSTDMETHOD(Register)(const QCLSID& clsid, QIUnknown* punk) = 0;
@@ -70,12 +73,14 @@ QT_DEFINE_IID(QIRunningObjectTable,"{DBAF323F-767A-452E-A779-FAAFD1318DE7}");
 
 // {C0BE31C1-EE06-4F2E-A8C9-97B6D13A7790}
 QT_DEFINE_GUID(CLSID_RunningObjectTable,
-0xc0be31c1, 0xee06, 0x4f2e, 0xa8, 0xc9, 0x97, 0xb6, 0xd1, 0x3a, 0x77, 0x90);
+    0xc0be31c1, 0xee06, 0x4f2e, 0xa8, 0xc9, 0x97, 0xb6, 0xd1, 0x3a, 0x77, 0x90);
 
 
 struct QIClassObjects : public QIUnknown
 {
-    QSTDMETHOD(GetClassObject)(const QIID& riid, void **ppv) = 0;
+    QSTDMETHOD(CreateInstance)(const QCLSID& clsid, QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
+
+    QSTDMETHOD(GetClassObject)(const QCLSID& clsid, void **ppv) = 0;
 
     QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module) = 0;
     QSTDMETHOD(isRegistered)(const QCLSID& clsid) = 0;
@@ -91,9 +96,24 @@ QT_DEFINE_GUID(CLSID_ClassObjects,
 
 struct QIApplication : public QIUnknown
 {
-
+    QSTDMETHOD(Exec)() = 0;
+    QSTDMETHOD(Quit)(int returnCode) = 0;
 };
-QT_DEFINE_IID(QIApplication,"24d0c25e-632c-4440-b057-68ed5bb415f5");
+QT_DEFINE_IID(QIApplication,"{24d0c25e-632c-4440-b057-68ed5bb415f5}");
+
+struct QIPlugin : public QIUnknown
+{
+    QSTDMETHOD(Init)(void* ) = 0;
+    QSTDMETHOD(UnInit)(int returnCode) = 0;
+};
+QT_DEFINE_IID(QIPlugin,"{1f06f05a-1bb1-4ded-b0b2-473865875dbf}");
+
+struct QIPluginRun : public QIUnknown
+{
+    QSTDMETHOD(Start)() = 0;
+    QSTDMETHOD(Stop)() = 0;
+};
+QT_DEFINE_IID(QIPluginRun,"{c1bdb92b-444c-4750-a4a4-7bfe1e2ff74f}");
 
 struct QIClassFactory : public QIUnknown
 {
