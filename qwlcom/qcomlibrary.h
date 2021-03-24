@@ -7,6 +7,16 @@ class QComLibrary : public QLibrary
 {
     typedef int (*DllGetClassObjectFunc)(const QCLSID& , const QIID& , void** );
 public:
+    QComLibrary():m_func(nullptr)
+    {
+
+    }
+
+    ~QComLibrary()
+    {
+        QLibrary::unload();
+    }
+
     QHRESULT open( const QString& fileName)
     {
         if( !QLibrary::isLibrary(fileName ))

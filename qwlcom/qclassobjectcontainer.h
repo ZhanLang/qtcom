@@ -17,6 +17,11 @@ public:
         return QS_OK;
     }
 
+    ~QClassObjectsContainer()
+    {
+        RevokeAll();
+    }
+
     QSTDMETHOD(CreateInstance)(const QCLSID& clsid, QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject)
     {
         QComPtr<QIClassFactoryEx> pCls;
