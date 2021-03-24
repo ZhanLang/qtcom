@@ -17,8 +17,7 @@
 #define QE_UNEXPECTED                     (0x8000FFFFL)
 #define QE_NOTIMPL                        (0x80004001L)
 
-typedef QUuid QIID;
-typedef QUuid QCLSID;
+typedef QUuid QIID, QCLSID;
 typedef ulong QHRESULT;
 
 #define QFAILED(hr) (((QHRESULT)(hr)) < 0)
@@ -34,7 +33,7 @@ inline const QIID& _luuidof( )
 
 #define QT_DEFINE_IID(iface, uuid_string)\
 template<>\
-inline const QIID& _luuidof<iface>( ){\
+inline const QIID& _luuidof<iface>(){\
     static QIID guid = QUuid::fromString(QString::fromLatin1(uuid_string));\
     return guid;\
 }
