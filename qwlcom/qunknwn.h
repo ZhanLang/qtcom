@@ -24,6 +24,8 @@ typedef ulong QHRESULT;
 #define QRASSERT(x, _h_r_) { if(!(x)) return _h_r_; }
 #define QRFAILED(x) { QHRESULT _h_r_ = (x); if(QFAILED(_h_r_)) return _h_r_; }
 
+#define QSTDMETHOD(method) virtual QHRESULT STDMETHODCALL method
+#define QSTDMETHOD_(result,method) virtual result STDMETHODCALL method
 template <class T>
 inline const QIID& _luuidof( )
 {
@@ -46,19 +48,58 @@ inline const QIID& _luuidof<iface>(){\
 
 struct QIUnknown
 {
-    virtual ulong STDMETHODCALL AddRef() = 0;
-    virtual ulong STDMETHODCALL Release() = 0;
-    virtual QHRESULT STDMETHODCALL QueryInterface(const QIID& uuid, void  **ppvObject) = 0;
+    QSTDMETHOD_(ulong,AddRef)() = 0;
+    QSTDMETHOD_(ulong,Release)() = 0;
+    QSTDMETHOD(QueryInterface)(const QIID& uuid, void  **ppvObject) = 0;
 };
 QT_DEFINE_IID(QIUnknown,"{00000000-0000-0000-C000-000000000046}");
 
 #define QINull ((QIUnknown*)0)
 
+struct QIRunningObjectTable : public QIUnknown
+{
+    QSTDMETHOD(GetObject)(const QCLSID& clsid, const QIID& iid, void **ppunk) = 0;
+
+    QSTDMETHOD(Register)(const QCLSID& clsid, QIUnknown* punk) = 0;
+    QSTDMETHOD_(bool, isRunning)(const QCLSID& clsid) = 0;
+
+    QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
+    QSTDMETHOD(RevokeAll)() = 0;
+};
+QT_DEFINE_IID(QIRunningObjectTable,"{DBAF323F-767A-452E-A779-FAAFD1318DE7}");
+
+// {C0BE31C1-EE06-4F2E-A8C9-97B6D13A7790}
+QT_DEFINE_GUID(CLSID_RunningObjectTable,
+0xc0be31c1, 0xee06, 0x4f2e, 0xa8, 0xc9, 0x97, 0xb6, 0xd1, 0x3a, 0x77, 0x90);
+
+
+struct QIClassObjects : public QIUnknown
+{
+    QSTDMETHOD(GetClassObject)(const QIID& riid, void **ppv) = 0;
+
+    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module) = 0;
+    QSTDMETHOD(isRegistered)(const QCLSID& clsid) = 0;
+
+    QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
+    QSTDMETHOD(RevokeAll)() = 0;
+};
+QT_DEFINE_IID(QIClassObjects,"{E6854E4D-5549-4D33-B8A5-B39F6786531C}");
+
+// {1032D791-B0FC-41B5-9523-614450DF366C}
+QT_DEFINE_GUID(CLSID_ClassObjects,
+    0x1032d791, 0xb0fc, 0x41b5, 0x95, 0x23, 0x61, 0x44, 0x50, 0xdf, 0x36, 0x6c);
+
+struct QIApplication : public QIUnknown
+{
+
+};
+QT_DEFINE_IID(QIApplication,"24d0c25e-632c-4440-b057-68ed5bb415f5");
+
 struct QIClassFactory : public QIUnknown
 {
 public:
-    virtual QHRESULT STDMETHODCALL CreateInstance( QIUnknown *pUnkOuter,const QIID& iid, void **ppvObject) = 0;
-    virtual QHRESULT STDMETHODCALL LockServer( bool fLock) = 0;
+   QSTDMETHOD(CreateInstance)( QIUnknown *pUnkOuter,const QIID& iid, void **ppvObject) = 0;
+   QSTDMETHOD(LockServer)( bool fLock) = 0;
 };
 QT_DEFINE_IID(QIClassFactory,"{00000001-0000-0000-C000-000000000046}");
 
@@ -66,12 +107,8 @@ QT_DEFINE_IID(QIClassFactory,"{00000001-0000-0000-C000-000000000046}");
 struct QIClassFactoryEx: public QIUnknown
 {
 public:
-    virtual QHRESULT STDMETHODCALL CreateInstance(QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
+    QSTDMETHOD(CreateInstance)(QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
 };
 QT_DEFINE_IID(QIClassFactoryEx,"{6966E385-DBFA-4131-A29E-D0E9464F3F53}");
-
-// {E9678781-A3CB-46fb-9121-3ED22C24CFAD}
-QT_DEFINE_GUID(CLSID_QClassFactory,
-               0xe9678781, 0xa3cb, 0x46fb, 0x91, 0x21, 0x3e, 0xd2, 0x2c, 0x24, 0xcf, 0xad);
 
 #endif // QUNKNWN_H
