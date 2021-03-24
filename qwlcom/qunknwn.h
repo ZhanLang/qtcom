@@ -11,6 +11,7 @@
 
 #define QS_OK                             (0L)
 #define QS_FALSE                          (1L)
+#define QE_FAIL                           (0x80004005L)
 #define QE_INVALIDARG                     (0x80070057L)
 #define QE_NOTIMPL                        (0x80004001L)
 #define QE_NOINTERFACE                    (0x80004002L)
@@ -76,19 +77,19 @@ QT_DEFINE_GUID(CLSID_RunningObjectTable,
     0xc0be31c1, 0xee06, 0x4f2e, 0xa8, 0xc9, 0x97, 0xb6, 0xd1, 0x3a, 0x77, 0x90);
 
 
-struct QIClassObjects : public QIUnknown
+struct QIClassObjectContainer : public QIUnknown
 {
     QSTDMETHOD(CreateInstance)(const QCLSID& clsid, QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject) = 0;
 
-    QSTDMETHOD(GetClassObject)(const QCLSID& clsid, void **ppv) = 0;
+    QSTDMETHOD(GetClassObject)(const QCLSID& clsid,const QIID& iid, void **pCls) = 0;
 
     QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module) = 0;
-    QSTDMETHOD(isRegistered)(const QCLSID& clsid) = 0;
+    QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid) = 0;
 
     QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
     QSTDMETHOD(RevokeAll)() = 0;
 };
-QT_DEFINE_IID(QIClassObjects,"{E6854E4D-5549-4D33-B8A5-B39F6786531C}");
+QT_DEFINE_IID(QIClassObjectContainer,"{E6854E4D-5549-4D33-B8A5-B39F6786531C}");
 
 // {1032D791-B0FC-41B5-9523-614450DF366C}
 QT_DEFINE_GUID(CLSID_ClassObjects,

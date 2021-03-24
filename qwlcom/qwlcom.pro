@@ -4,7 +4,7 @@
 
 TEMPLATE = lib
 TARGET = qwlcom
-DESTDIR = ./debug
+DESTDIR = "../bin"
 CONFIG += debug
 DEFINES += _WINDOWS _UNICODE _ENABLE_EXTENDED_ALIGNED_STORAGE QTCOM_LIBRARY QT_DEPRECATED_WARNINGS
 LIBS += -L"."
@@ -17,7 +17,13 @@ TRANSLATIONS += qtcom_zh_CN.ts
 
 HEADERS += \
     qclassfactoryimpl.h \
+    qclassobjectcontainer.h \
+    qcomlibrary.h \
     qcomptr.h \
     qrunningobjecttable.h \
+    qtcom.h \
     qunknwn.h \
     qunknwnimpl.h
+
+SOURCES += \
+    qtcom.cpp

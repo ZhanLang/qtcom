@@ -7,7 +7,7 @@
 #include"qunknwnimpl.h"
 #include"qcomptr.h"
 
-class QRunningObjectTable: public QIRunningObjectTable, public QUnknownImp
+class QRunningObjectTableImpl: public QIRunningObjectTable, public QUnknownImp
 {
 public:
 
@@ -19,8 +19,8 @@ public:
 
     QSTDMETHOD(QuickCreateInstance)(const QCLSID& clsid, QIUnknown *punkOuter, const QIID& iid, void **ppvObject)
     {
-        QComPtr<QIClassObjects> pClsobjs;
-        QHRESULT hr = GetObject(clsid, qt_uuidof(QIClassObjects), (void**)&pClsobjs);
+        QComPtr<QIClassObjectContainer> pClsobjs;
+        QHRESULT hr = GetObject(clsid, qt_uuidof(QIClassObjectContainer), (void**)&pClsobjs);
         if( hr != QS_OK)
             return hr;
 
