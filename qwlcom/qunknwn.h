@@ -22,7 +22,9 @@
 typedef QUuid QIID, QCLSID;
 typedef long QHRESULT;
 
-#define QFAILED(hr) (((QHRESULT)(hr)) > 0)
+#define QFAILED(hr) (hr != QS_OK)
+#define QSUCCESSED(hr) (hr == QS_OK)
+
 #define QRASSERT(x, _h_r_) { if(!(x)) return _h_r_; }
 #define QRFAILED(x) { QHRESULT _h_r_ = (x); if(QFAILED(_h_r_)) return _h_r_; }
 
