@@ -11,24 +11,6 @@ public:
     virtual ~QUnknownImp(){}
 };
 
-#define QIBEGIN	\
-        virtual QHRESULT STDMETHODCALL QueryInterface(const QIID&  riid, void **ppv) {
-
-#define QIUNKNOWN	\
-    if(qt_uuidof(QIUnknown) == riid) { *ppv = static_cast<QIUnknown*>(this); AddRef(); return QS_OK; }
-
-#define QIUNKNOWN_(icast)	\
-    if(qt_uuidof(QIUnknown) == riid) { *ppv = static_cast<QIUnknown*>(static_cast<icast*>(this)); AddRef(); return QS_OK; }
-
-#define QIENTRY(iface)	\
-    if(qt_uuidof(iface) == riid) { *ppv = static_cast<iface*>(this); AddRef(); return QS_OK; }
-
-#define QIENTRY_(iface, icast)	\
-    if(qt_uuidof(iface) == riid) { *ppv = static_cast<iface*>(static_cast<icast*>(this)); AddRef(); return QS_OK; }
-
-#define QIEND \
-    return QE_NOINTERFACE; }
-
 #define ADDREF	\
     virtual ulong STDMETHODCALL AddRef()	\
         {return this->m_RefCount++; }
@@ -56,8 +38,6 @@ public:
 #define QTCOM_QUERYINTERFACE_BEGIN(icast) \
     QSTDMETHOD(QueryInterface)(const QIID& iid, void **ppv) {\
     if(qt_uuidof(QIUnknown) == iid) { *ppv = static_cast<QIUnknown*>(static_cast<icast*>(this)); AddRef(); return QS_OK; }\
-
-
 
 #define QTCOM_QUERYINTERFACE_END \
             return QE_NOINTERFACE; }
