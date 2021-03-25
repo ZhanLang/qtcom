@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     QComPtr<QIRunningObjectTable> pRot;
     QClassObjectsContainer container;
-    container.Register(CLSID_RunningObjectTable, "D:\\code\\qtcom\\bin\\qwlcom.dll");
+    container.Register(CLSID_RunningObjectTable, "D:\\code\\qtcom\\bin\\qwlcom1.dll");
     container.CreateInstance(CLSID_RunningObjectTable, QINull, QINull, qt_uuidof(QIRunningObjectTable),(void**)&pRot.m_p );
 
 

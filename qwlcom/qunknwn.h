@@ -11,18 +11,18 @@
 #endif
 
 #define QS_OK                             (0L)
-#define QS_FALSE                          (1L)
-#define QE_FAIL                           (0x80004005L)
-#define QE_INVALIDARG                     (0x80070057L)
-#define QE_NOTIMPL                        (0x80004001L)
-#define QE_NOINTERFACE                    (0x80004002L)
-#define QE_UNEXPECTED                     (0x8000FFFFL)
-#define QE_NOTFIND                        (0x60004001L)
-#define QE_EXIST                          (0x60004002L)
-typedef QUuid QIID, QCLSID;
-typedef ulong QHRESULT;
+#define QE_FAIL                           (0x00004005L)
+#define QE_INVALIDARG                     (0x00070057L)
+#define QE_NOTIMPL                        (0x00004001L)
+#define QE_NOINTERFACE                    (0x00004002L)
+#define QE_UNEXPECTED                     (0x0000FFFFL)
+#define QE_NOTFIND                        (0x00005001L)
+#define QE_EXIST                          (0x00005002L)
 
-#define QFAILED(hr) (((QHRESULT)(hr)) < 0)
+typedef QUuid QIID, QCLSID;
+typedef long QHRESULT;
+
+#define QFAILED(hr) (((QHRESULT)(hr)) > 0)
 #define QRASSERT(x, _h_r_) { if(!(x)) return _h_r_; }
 #define QRFAILED(x) { QHRESULT _h_r_ = (x); if(QFAILED(_h_r_)) return _h_r_; }
 

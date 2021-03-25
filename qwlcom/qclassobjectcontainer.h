@@ -29,8 +29,7 @@ public:
     QSTDMETHOD(CreateInstance)(const QCLSID& clsid, QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject)
     {
         QComPtr<QIClassFactoryEx> pCls;
-        QFAILED(GetClassObject(clsid, qt_uuidof(QIClassFactoryEx), (void**)&pCls.m_p));
-
+        QRFAILED(GetClassObject(clsid, qt_uuidof(QIClassFactoryEx), (void**)&pCls.m_p));
         return pCls->CreateInstance(prot, punkOuter, iid, ppvObject);
     }
 
