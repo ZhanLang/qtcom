@@ -2,6 +2,7 @@
 #define QUNKNWN_H
 
 #include<QUuid>
+#include<QVariant>
 #define STDMETHODCALL __stdcall
 #ifdef _WIN32
 
@@ -97,6 +98,9 @@ QT_DEFINE_GUID(CLSID_ClassObjects,
 
 struct QIApplication : public QIUnknown
 {
+    QSTDMETHOD_(QVariant,GetProperty)(const QString& key) = 0;
+    QSTDMETHOD(SetProperty)(const QString& key, const QVariant& value) = 0;
+
     QSTDMETHOD(Exec)() = 0;
     QSTDMETHOD(Quit)(int returnCode) = 0;
 };

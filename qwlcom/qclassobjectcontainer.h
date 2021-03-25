@@ -11,7 +11,11 @@
 class QClassObjectsContainer : public QIClassObjectContainer , private QUnknownImp
 {
 public:
-    UNKNOWN_IMP1_(QIClassObjectContainer);
+    QTCOM_ADDREF_RELEASE
+    QTCOM_QUERYINTERFACE_BEGIN(QIClassObjectContainer)
+        QTCOM_QUERYINTERFACE_ENTRY(QIClassObjectContainer)
+    QTCOM_QUERYINTERFACE_END
+
     QHRESULT init_class( QIUnknown*, QIUnknown*)
     {
         return QS_OK;
@@ -37,7 +41,10 @@ public:
             return QE_NOTFIND;
 
         QComLibrary* lib = m_clsobjs[clsid];
-        return lib->DllGetClassObject(clsid, iid, ppv);
+        if( lib )
+            return lib->DllGetClassObject(clsid, iid, ppv);
+
+        return QE_UNEXPECTED;
     }
 
     QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module)
@@ -47,6 +54,9 @@ public:
             return QE_EXIST;
 
         QComLibrary* lib = new QComLibrary();
+        if( !lib )
+            return QE_UNEXPECTED;
+
         if(lib->open(module) == QS_OK)
         {
             m_clsobjs.insert(clsid, lib);

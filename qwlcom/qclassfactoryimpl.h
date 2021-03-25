@@ -10,22 +10,26 @@
 #define QEXPORT_API
 #endif
 
-#define QBEGIN_CLIDMAP \
+#define QTCOM_BEGIN_CLIDMAP \
 extern "C" QHRESULT QEXPORT_API DllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls)\
 {\
     QComPtr<QIUnknown> p; if( clsid.isNull() ) return QE_NOTIMPL;
 
-#define QEND_CLIDMAP\
+#define QTCOM_END_CLIDMAP\
     if(p) return p->QueryInterface(iid, pCls); return QE_NOTIMPL;}
 
-#define QCLIDMAPENTRY( CID, CLASS) \
+#define QTCOM_CLIDMAPENTRY( CID, CLASS) \
     else if(clsid == CID) p = new QTStdClsFactory<CLASS>();
 
 template<class CLS, class IFactory = QIClassFactory>
 class QTClsFactory : public IFactory, public QUnknownImp
 {
 public: // QIUnknown:
-    UNKNOWN_IMP1_(IFactory)
+    QTCOM_ADDREF_RELEASE
+    QTCOM_QUERYINTERFACE_BEGIN(IFactory)
+        QTCOM_QUERYINTERFACE_ENTRY(IFactory)
+    QTCOM_QUERYINTERFACE_END
+
 public:
 
     // QIClassFactory

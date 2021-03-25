@@ -10,8 +10,11 @@
 class QRunningObjectTableImpl: public QIRunningObjectTable, public QUnknownImp
 {
 public:
+    QTCOM_ADDREF_RELEASE;
+    QTCOM_QUERYINTERFACE_BEGIN(QIRunningObjectTable)
+        QTCOM_QUERYINTERFACE_ENTRY(QIRunningObjectTable)
+    QTCOM_QUERYINTERFACE_END;
 
-    UNKNOWN_IMP1_(QIRunningObjectTable);
     QHRESULT init_class( QIUnknown*, QIUnknown*)
     {
         return QS_OK;

@@ -4,10 +4,10 @@
 #include"qrunningobjecttable.h"
 #include"qclassobjectcontainer.h"
 
-QBEGIN_CLIDMAP
-    QCLIDMAPENTRY(CLSID_RunningObjectTable, QRunningObjectTableImpl)
-    QCLIDMAPENTRY(CLSID_ClassObjects, QClassObjectsContainer)
-QEND_CLIDMAP
+QTCOM_BEGIN_CLIDMAP
+    QTCOM_CLIDMAPENTRY(CLSID_RunningObjectTable, QRunningObjectTableImpl)
+    QTCOM_CLIDMAPENTRY(CLSID_ClassObjects, QClassObjectsContainer)
+QTCOM_END_CLIDMAP
 
 QTCOM_EXPORT Qtcom::Qtcom()
 {
