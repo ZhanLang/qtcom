@@ -9,7 +9,7 @@
 
 
 #define DEFAULT_BUFFER_SIZE			512
-#define DEFAULT_BLOCK_SIZE			1024	   //姣忔鍒嗛厤鐨勫唴瀛樺潡澶у皬
+#define DEFAULT_BLOCK_SIZE			1024
 
 
 template<typename T>
@@ -60,7 +60,7 @@ public:
 
     QTCOM_ADDREF_RELEASE
     QTCOM_QUERYINTERFACE_BEGIN(QIBuffer)
-        QTCOM_QUERYINTERFACE_ENTRY(QIBuffer)
+    QTCOM_QUERYINTERFACE_ENTRY(QIBuffer)
     QTCOM_QUERYINTERFACE_END
 
     typedef QStackLockWrapper<LockType> SRVATUOLOCK;
