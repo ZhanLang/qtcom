@@ -8,30 +8,30 @@
 #include"qcomptr.h"
 
 
-class QClassObjectsContainer : public QIClassObjectContainer , private QUnknownImp
+class QClassContainer : public QIClassContainer , private QUnknownImp
 {
 public:
     QTCOM_ADDREF_RELEASE
-    QTCOM_QUERYINTERFACE_BEGIN(QIClassObjectContainer)
-        QTCOM_QUERYINTERFACE_ENTRY(QIClassObjectContainer)
+    QTCOM_QUERYINTERFACE_BEGIN(QIClassContainer)
+        QTCOM_QUERYINTERFACE_ENTRY(QIClassContainer)
     QTCOM_QUERYINTERFACE_END
+
+    QClassContainer(void* parent)
+    {
+        Q_UNUSED(parent)
+    }
 
     QHRESULT init_class( QIUnknown*, QIUnknown*)
     {
         return QS_OK;
     }
 
-    ~QClassObjectsContainer()
+    ~QClassContainer()
     {
         RevokeAll();
     }
 
-    QSTDMETHOD(CreateInstance)(const QCLSID& clsid, QIUnknown *prot, QIUnknown *punkOuter, const QIID& iid, void **ppvObject)
-    {
-        QComPtr<QIClassFactoryEx> pCls;
-        QRFAILED(GetClassObject(clsid, qt_uuidof(QIClassFactoryEx), (void**)&pCls.m_p));
-        return pCls->CreateInstance(prot, punkOuter, iid, ppvObject);
-    }
+
 
     QSTDMETHOD(GetClassObject)(const QCLSID& clsid, const QIID& iid,void **ppv)
     {

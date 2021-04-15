@@ -9,4 +9,5 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 TEMPLATE = subdirs
 SUBDIRS += qwlcom/qwlcom.pro \
-    example/example.pro
+    example/example.pro \
+    qtcombase

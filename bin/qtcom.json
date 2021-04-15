@@ -1,0 +1,30 @@
+{
+	"description": "test module",
+	"module": [{
+		"path": ".",
+		"relative": true,
+		"name": "qtcombase",
+		"description":"disp module",
+		"class": [{
+			"clsid": "qtcom.class.buffer",
+			"description": "this is a buff object."
+		},
+		{
+			"clsid": "qtcom.class.buffer",
+			"description": "this is a buff object."
+		}]
+	},
+	{
+		"path": "/opt/apps/qtcom",
+		"name": "baselib",
+		"description":"disp module",
+		"class": [{
+			"clsid": "qtcom.class.buffer",
+			"description": "this is a buff object."
+		},
+		{
+			"clsid": "qtcom.class.buffer",
+			"description": "this is a buff object."
+		}]
+	}]
+}

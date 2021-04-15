@@ -16,6 +16,10 @@ public:
         QTCOM_QUERYINTERFACE_ENTRY(QIUnknown)
     QTCOM_QUERYINTERFACE_END
 
+    QUnKnown( void* parent)
+    {
+
+    }
     QHRESULT init_class( QIUnknown* pRot, QIUnknown* punkOuter)
     {
         return QS_OK;
@@ -26,10 +30,9 @@ public:
     }
 };
 
-QT_DEFINE_GUID(CLSID_TestClass, 0xe9678781, 0xa3cb, 0x46fb, 0x91, 0x21, 0x3e, 0xd2, 0x2c, 0x24, 0xcf, 0xad);
+QT_DEFINE_CLSID(CLSID_TestClass, "CCC");
 
 QTCOM_BEGIN_CLIDMAP
-    QTCOM_CLIDMAPENTRY(CLSID_TestClass, QUnKnown)
     QTCOM_CLIDMAPENTRY(CLSID_RunningObjectTable, QRunningObjectTableImpl)
 QTCOM_END_CLIDMAP
 
@@ -37,20 +40,27 @@ int main(int argc, char *argv[])
 {
 {
 
-    QComPtr<QIUnknown> p = new QUnKnown();
+   // QComPtr<QIUnknown> p = new QUnKnown(nullptr);
 }
-    QUuid u1 = CLSID_TestClass;
-    qDebug() << u1.toString();
+    QIID u1 = CLSID_TestClass;
 
-    QUuid u =  qt_uuidof(QIUnknown);
-    qDebug() << u.toString();
+
+    QIID u =  qt_uuidof(QIUnknown);
+
     QApplication a(argc, argv);
 
     QComPtr<QIRunningObjectTable> pRot;
-    QClassObjectsContainer container;
+    QClassContainer container(nullptr);
     container.Register(CLSID_RunningObjectTable, "D:\\code\\qtcom\\bin\\qwlcom1.dll");
-    container.CreateInstance(CLSID_RunningObjectTable, QINull, QINull, qt_uuidof(QIRunningObjectTable),(void**)&pRot.m_p );
+   // container.CreateInstance(CLSID_RunningObjectTable, QINull, QINull, qt_uuidof(QIRunningObjectTable),(void**)&pRot.m_p );
 
+    {
+        QComPtr<QIClassFactory> pCls;
+        DllGetClassObject(CLSID_TestClass, qt_uuidof(QIClassFactory), (void**)&pCls.m_p);
+
+        QComPtr<QIUnknown> pUnknown;
+        pCls->CreateInstance(qt_uuidof(QIUnknown), (void**)pCls.m_p);
+    }
 
    
     return a.exec();

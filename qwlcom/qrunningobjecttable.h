@@ -15,25 +15,14 @@ public:
         QTCOM_QUERYINTERFACE_ENTRY(QIRunningObjectTable)
     QTCOM_QUERYINTERFACE_END;
 
+    QRunningObjectTableImpl(void*)
+    {
+
+    }
+
     QHRESULT init_class( QIUnknown*, QIUnknown*)
     {
         return QS_OK;
-    }
-
-    QSTDMETHOD(QuickCreateInstance)(const QCLSID& clsid, QIUnknown *punkOuter, const QIID& iid, void **ppvObject)
-    {
-        QComPtr<QIClassObjectContainer> pClsobjs;
-        QHRESULT hr = GetObject(clsid, qt_uuidof(QIClassObjectContainer), (void**)&pClsobjs);
-        if( hr != QS_OK)
-            return hr;
-
-        hr = pClsobjs->isRegistered( clsid );
-        if( hr != QS_OK )
-            return hr;
-
-        return pClsobjs->CreateInstance(clsid,
-                                        static_cast<QIUnknown*>(static_cast<QIRunningObjectTable*>(this)),
-                                        punkOuter, iid, ppvObject);
     }
 
     QSTDMETHOD(GetObject)(const QCLSID& clsid, const QIID& iid, void **ppunk)

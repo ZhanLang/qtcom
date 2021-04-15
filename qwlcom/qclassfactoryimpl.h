@@ -19,102 +19,41 @@ extern "C" QHRESULT QEXPORT_API DllGetClassObject( const QCLSID& clsid, const QI
     if(p) return p->QueryInterface(iid, pCls); return QE_NOTIMPL;}
 
 #define QTCOM_CLIDMAPENTRY( CID, CLASS) \
-    else if(clsid == CID) p = new QTStdClsFactory<CLASS>();
+    else if(clsid == CID) p = new QTClsFactory<CLASS>();
 
-template<class CLS, class IFactory = QIClassFactory>
-class QTClsFactory : public IFactory, public QUnknownImp
+
+template<class CLS>
+class QTClsFactory : public QIClassFactory, public QUnknownImp
 {
-public: // QIUnknown:
+public:
     QTCOM_ADDREF_RELEASE
-    QTCOM_QUERYINTERFACE_BEGIN(IFactory)
-        QTCOM_QUERYINTERFACE_ENTRY(IFactory)
+    QTCOM_QUERYINTERFACE_BEGIN(QIClassFactory)
+        QTCOM_QUERYINTERFACE_ENTRY(QIClassFactory)
     QTCOM_QUERYINTERFACE_END
 
 public:
-
-    // QIClassFactory
-    virtual QHRESULT STDMETHODCALL CreateInstance(
-        /* [unique][in] */ QIUnknown *punkOuter,
-        /* [in] */ const QUuid& riid,
-        /* [iid_is][out] */ void **ppv)
+    virtual QHRESULT STDMETHODCALL CreateInstance(const QIID& iid, void **ppv,QIUnknown *prot = QINull, void* parent=nullptr, QIUnknown *pUnkOuter = QINull)
     {
-        return create_instance(punkOuter, riid, ppv);
+        QRASSERT(ppv, QE_INVALIDARG);
+
+        *ppv = 0;
+        QComPtr<CLS> p(new CLS(parent));
+        QRASSERT(p, QE_UNEXPECTED);
+        QRFAILED(p->init_class(prot, pUnkOuter));
+        QRFAILED(p->QueryInterface(iid, ppv));
+        p.detach();
+        return QS_OK;
     }
 
     virtual QHRESULT STDMETHODCALL LockServer(bool fLock)
     {
-        return lock_server(fLock);
-    }
-
-public:
-    static QHRESULT create_instance(QIUnknown *punkOuter, const QIID& riid, void **ppv)
-    {
-        QRASSERT(ppv, QE_INVALIDARG);
-
-
-        *ppv = 0;
-        QRASSERT(!punkOuter || qt_uuidof(QIUnknown) == riid, QE_INVALIDARG);
-        QComPtr<CLS> p(new CLS);
-        QRASSERT(p, QE_UNEXPECTED);
-        QRFAILED(p->init_class(QINull, punkOuter));
-        QRFAILED(p->QueryInterface(riid, ppv));
-        p.detach();
+        Q_UNUSED(fLock);
         return QS_OK;
-    }
-
-    static QHRESULT lock_server(bool /*fLock*/)
-    {
-        return QS_OK;
-    }
-
-    static QHRESULT GetClassObject(const QIID& riid, void **ppv)
-    {
-        return QTClsFactory<QTClsFactory<CLS> >::create_instance(0, riid, ppv);
     }
 };
 
 
 
-template<class CLS>
-class QTStdClsFactory : public QTClsFactory<CLS, QIClassFactoryEx>
-{
-public:
-    virtual QHRESULT STDMETHODCALL CreateInstance(QIUnknown *prot, QIUnknown *punkOuter, const QIID& riid, void **ppv)
-    {
-        return create_instance(prot, punkOuter, riid, ppv);
-    }
-
-    // std factory invoke:
-    virtual QHRESULT STDMETHODCALL init_class(QIUnknown* prot, QIUnknown* punkOuter)
-    {
-        Q_UNUSED(prot);
-        return !punkOuter ? QS_OK : QE_INVALIDARG;
-    }
-
-    virtual QHRESULT STDMETHODCALL init_class_inner(QIUnknown* punkOuter)
-    {
-        return !punkOuter ? QS_OK : QE_INVALIDARG;
-    }
-
-public:
-    static QHRESULT create_instance(QIUnknown *prot, QIUnknown *punkOuter, const QIID& riid, void **ppv)
-    {
-        QRASSERT(ppv, QE_INVALIDARG);
-        *ppv = 0;
-        QRASSERT(!punkOuter || qt_uuidof(QIUnknown) == riid, QE_INVALIDARG);
-        sentry<CLS*> p(new CLS);
-        QRASSERT(p, QE_UNEXPECTED);
-        QRFAILED(p->init_class(prot, punkOuter));
-        QRFAILED(p->QueryInterface(riid, ppv));
-        p.detach();
-        return QS_OK;
-    }
-
-    static QHRESULT GetClassObject(const QIID& riid, void **ppv)
-    {
-        return QTStdClsFactory<QTStdClsFactory<CLS> >::create_instance(0, 0, riid, ppv);
-    }
-};
 
 
 #endif

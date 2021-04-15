@@ -20,10 +20,13 @@ HEADERS += \
     qclassobjectcontainer.h \
     qcomlibrary.h \
     qcomptr.h \
+    qpropertyset.h \
     qrunningobjecttable.h \
     qtcom.h \
+    qtcomapplication.h \
     qunknwn.h \
     qunknwnimpl.h
 
 SOURCES += \
-    qtcom.cpp
+    qtcom.cpp \
+    qtcomapplication.cpp

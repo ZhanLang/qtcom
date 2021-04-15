@@ -1,0 +1,16 @@
+{
+    "libpath": ".",
+    "relative": true,
+    "filename": "qtcombase",
+    "description": "qtcom base module",
+    "class": [
+        {
+            "clsid": "qtcom.class.propertyset",
+            "description": "property set class."
+        },
+        {
+            "clsid": "qtcom.class.buffer",
+            "description": "this is a buff object."
+        }
+    ]
+}
