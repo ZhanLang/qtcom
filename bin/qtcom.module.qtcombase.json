@@ -9,8 +9,8 @@
             "description": "property set class."
         },
         {
-            "clsid": "qtcom.class.buffer",
-            "description": "this is a buff object."
+            "clsid": "qtcom.class.safebuffer",
+            "description": "this is a safe buff object."
         }
     ]
 }
