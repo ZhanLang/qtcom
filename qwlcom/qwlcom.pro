@@ -16,9 +16,10 @@ RCC_DIR += ./GeneratedFiles
 TRANSLATIONS += qtcom_zh_CN.ts
 
 HEADERS += \
+    qclasscontainer.h \
     qclassfactoryimpl.h \
-    qclassobjectcontainer.h \
     qcomlibrary.h \
+    qcommodule.h \
     qcomptr.h \
     qpropertyset.h \
     qrunningobjecttable.h \
@@ -28,5 +29,6 @@ HEADERS += \
     qunknwnimpl.h
 
 SOURCES += \
+    qcommodule.cpp \
     qtcom.cpp \
     qtcomapplication.cpp

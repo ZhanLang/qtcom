@@ -40,30 +40,38 @@ public:
             return QE_NOTFIND;
 
         QComLibrary* lib = m_clsobjs[clsid];
-        if( lib )
-            return lib->DllGetClassObject(clsid, iid, ppv);
+        if( !lib )
+            return QE_RUNTIME;
 
-        return QE_UNEXPECTED;
+        if( !lib->isLoaded() && !lib->open())
+        {
+             //todo log
+             return QE_UNEXPECTED;
+        }
+
+        return lib->DllGetClassObject(clsid, iid, ppv);
     }
 
-    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module)
+    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& file)
     {
         QMutexLocker locker(&m_mutex);
         if( m_clsobjs.contains(clsid))
             return QE_EXIST;
 
+        if(!QLibrary::isLibrary(path))
+        {
+            //todo log
+            return QE_UNEXPECTED;
+        }
+
         QComLibrary* lib = new QComLibrary();
         if( !lib )
             return QE_UNEXPECTED;
 
-        if(lib->open(module) == QS_OK)
-        {
-            m_clsobjs.insert(clsid, lib);
-            return QS_OK;
-        }
+        lib->setFileName(path);
+        m_clsobjs.insert(clsid, lib);
 
-        delete  lib;
-        return QE_FAIL;
+        return QS_OK;
     }
 
     QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid)
@@ -86,11 +94,11 @@ public:
         return QS_OK;
     }
 
-    QSTDMETHOD(RevokeAll)()
+    QSTDMETHOD_(void,RevokeAll)()
     {
         QMutexLocker locker(&m_mutex);
-        QHash<QCLSID, QComLibrary*>::const_iterator i;
-        for (i = m_clsobjs.begin(); i != m_clsobjs.end(); ++i)
+        QHash<QCLSID, QComLibrary*>::iterator i = m_clsobjs.begin();
+        for (; i != m_clsobjs.end(); ++i)
         {
             QComLibrary* lib = i.value();
             if( lib )
@@ -98,7 +106,6 @@ public:
         }
 
         m_clsobjs.clear();
-        return QS_OK;
     }
 
 private:

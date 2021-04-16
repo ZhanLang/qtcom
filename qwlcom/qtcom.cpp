@@ -2,7 +2,7 @@
 #include"qunknwn.h"
 #include"qclassfactoryimpl.h"
 #include"qrunningobjecttable.h"
-#include"qclassobjectcontainer.h"
+#include"qclasscontainer.h"
 #include"qtcomapplication.h"
 
 QTCOM_BEGIN_CLIDMAP

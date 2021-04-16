@@ -3,40 +3,44 @@
 		"key1": "value1",
 		"key2": "value2"
 	},
-	"qtcom": {
-		"files": [{
+	"module.files": [
+		{
 			"file": "./plugin.json",
 			"relative": true
 		},
 		{
 			"file": "./plugin.json",
 			"relative": true
-		}],
-		"paths": [{
+		}
+	],
+	"module.paths": [
+		{
 			"path": "/opt/files",
 			"suffix": "json"
 		},
 		{
 			"path": "/opt/files",
 			"suffix": "json"
-		}]
-	},
-	"plugin": {
-		"files": [{
-			"file": "./plugin.json",
-			"relative": true
-		},
+		}
+	],
+	"plugin.files": [
 		{
 			"file": "./plugin.json",
 			"relative": true
-		}],
-		"paths": [{
+		},
+		{
+			"file": "./plugin.json",
+			"relative": true
+		}
+	],
+	"plugin.paths": [
+		{
 			"path": "/opt/files",
 			"suffix": "json"
 		},
 		{
 			"path": "/opt/files",
 			"suffix": "json"
-		}]
-	}
+		}
+	]
 }

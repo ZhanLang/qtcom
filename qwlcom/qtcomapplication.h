@@ -1,5 +1,8 @@
 #ifndef QTCOMAPPLICATION_H
 #define QTCOMAPPLICATION_H
+
+#include<QJsonDocument>
+#include<QJsonObject>
 #include"qunknwnimpl.h"
 #include"qcomptr.h"
 class QtComApplication : public QIApplication, public QUnknownImp
@@ -24,9 +27,16 @@ protected:
 
     QSTDMETHOD_(QIPropertySet*,getPropertySet)();
     QSTDMETHOD_(QIRunningObjectTable*,getRunningObjectTable)();
+
+private:
+    QHRESULT load(const QString& cfgFile);
+    void initPropterty( QJsonDocument& doc);
+    QHRESULT loadModule(const QString& file);
+    QHRESULT loadClass(const QString& cfgPath, QJsonObject& doc);
 private:
     QComPtr<QIRunningObjectTable> m_rot;
     QComPtr<QIPropertySet> m_prop;
+    QComPtr<QIClassContainer> m_clsContainer;
 };
 
 #endif // QTCOMAPPLICATION_H

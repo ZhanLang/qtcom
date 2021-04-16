@@ -6,7 +6,7 @@
 #include<QDebug>
 #include<QClassFactoryImpl>
 #include"../qwlcom/qrunningobjecttable.h"
-#include"../qwlcom/qclassobjectcontainer.h"
+#include"../qwlcom/qclasscontainer.h"
 
 class QUnKnown : public QIUnknown, public QUnknownImp
 {

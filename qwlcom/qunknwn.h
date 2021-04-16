@@ -17,6 +17,7 @@
 #define QE_UNEXPECTED                     (3004L)
 #define QE_NOTFIND                        (3005L)
 #define QE_EXIST                          (3006L)
+#define QE_RUNTIME                        (3007L)
 
 typedef QString QIID, QCLSID;
 typedef long QHRESULT;
@@ -81,11 +82,11 @@ struct QIClassContainer : public QIUnknown
 {
     QSTDMETHOD(GetClassObject)(const QCLSID& clsid,const QIID& iid, void **pCls) = 0;
 
-    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& module) = 0;
+    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& file) = 0;
     QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid) = 0;
 
     QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
-    QSTDMETHOD(RevokeAll)() = 0;
+    QSTDMETHOD_(void,RevokeAll)() = 0;
 };
 QT_DEFINE_IID(QIClassContainer,"qtcom.i.class_container");
 

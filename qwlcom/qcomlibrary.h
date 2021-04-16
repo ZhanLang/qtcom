@@ -17,20 +17,17 @@ public:
         QLibrary::unload();
     }
 
-    QHRESULT open( const QString& fileName)
+    bool open()
     {
-        if( !QLibrary::isLibrary(fileName ))
-            return QE_UNEXPECTED;
 
-        QLibrary::setFileName(fileName);
         if( !QLibrary::load() )
-            return QE_FAIL;
+            return false;
 
         m_func = (DllGetClassObjectFunc) QLibrary::resolve("DllGetClassObject");
-        if( m_func )
-            return QS_OK;
+        if( !m_func )
+            return false;
 
-        return QE_NOINTERFACE;
+        return true;
     }
 
     void close()
