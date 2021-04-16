@@ -10,13 +10,13 @@
 #endif
 
 #define QS_OK                             (0L)
-#define QE_FAIL                           (0x00004005L)
-#define QE_INVALIDARG                     (0x00070057L)
-#define QE_NOTIMPL                        (0x00004001L)
-#define QE_NOINTERFACE                    (0x00004002L)
-#define QE_UNEXPECTED                     (0x0000FFFFL)
-#define QE_NOTFIND                        (0x00005001L)
-#define QE_EXIST                          (0x00005002L)
+#define QE_FAIL                           (3000L)
+#define QE_INVALIDARG                     (3001L)
+#define QE_NOTIMPL                        (3002L)
+#define QE_NOINTERFACE                    (3003L)
+#define QE_UNEXPECTED                     (3004L)
+#define QE_NOTFIND                        (3005L)
+#define QE_EXIST                          (3006L)
 
 typedef QString QIID, QCLSID;
 typedef long QHRESULT;
@@ -100,8 +100,8 @@ struct QIPropertySet : public QIUnknown
     QSTDMETHOD_(bool,isPropertyExist)(const QString& key) = 0;
     QSTDMETHOD_(QStringList,GetPropertyKeys)() = 0;
 };
-QT_DEFINE_IID(QIPropertySet,"qtcom.i.propertyset");
-QT_DEFINE_CLSID(CLSID_QPropertySet, "qtcom.class.propertyset")
+QT_DEFINE_IID(QIPropertySet,"qtcombase.i.propertyset");
+QT_DEFINE_CLSID(CLSID_QPropertySet, "qtcombase.class.propertyset")
 
 struct QIApplication : public QIUnknown
 {

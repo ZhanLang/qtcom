@@ -57,13 +57,17 @@ template<typename LockType = QNullCriticalSection ,typename T2 = sysbufmgr<uchar
 class QBufferImp: public QIBuffer,private QUnknownImp
 {
 public:
-
+    typedef QStackLockWrapper<LockType> SRVATUOLOCK;
     QTCOM_ADDREF_RELEASE
     QTCOM_QUERYINTERFACE_BEGIN(QIBuffer)
-    QTCOM_QUERYINTERFACE_ENTRY(QIBuffer)
+        QTCOM_QUERYINTERFACE_ENTRY(QIBuffer)
     QTCOM_QUERYINTERFACE_END
 
-    typedef QStackLockWrapper<LockType> SRVATUOLOCK;
+    QHRESULT init_class(QIUnknown* ,QIUnknown*)
+    {
+        return QS_OK;
+    }
+
 
     QBufferImp(void*)
     {
@@ -87,7 +91,7 @@ public:
     QSTDMETHOD(GetRawBuffer)(uchar** lppoutData,ulong* dwBufSize)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(lppoutData != NULL &&  dwBufSize != NULL,QE_INVALIDARG);
+        QRASSERT(lppoutData != NULL &&  dwBufSize != NULL,QE_INVALIDARG);
 
         *lppoutData = m_lpByteBuf;
         *dwBufSize = m_dwDataSize;
@@ -97,15 +101,15 @@ public:
     QSTDMETHOD(SetBuffer)(uchar* lpBuf,ulong dwSize,ulong dwStartIndex = 0)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(m_lpByteBuf,QE_FAIL);
-        RASSERT(lpBuf != NULL,QE_INVALIDARG);
-        RASSERT(dwSize>0,QS_OK);
-        RASSERT(dwStartIndex <= m_dwDataSize,QE_INVALIDARG);
+        QRASSERT(m_lpByteBuf,QE_FAIL);
+        QRASSERT(lpBuf != NULL,QE_INVALIDARG);
+        QRASSERT(dwSize>0,QS_OK);
+        QRASSERT(dwStartIndex <= m_dwDataSize,QE_INVALIDARG);
 
 
         if (dwSize + dwStartIndex <=m_dwBufSize)
         {
-            CopyMemory(m_lpByteBuf+dwStartIndex,lpBuf,dwSize);
+            memcmp(m_lpByteBuf+dwStartIndex,lpBuf,dwSize);
         }
         else
         {
@@ -127,11 +131,11 @@ public:
     QSTDMETHOD(GetBuffer)(uchar* lpoutData, ulong dwSize,ulong* pDwReadCount,ulong dwStartIndex = 0)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(m_lpByteBuf,QE_FAIL);
-        RASSERT(lpoutData != nullptr &&  pDwReadCount != nullptr,QE_INVALIDARG);
-        RASSERT(dwStartIndex <= m_dwDataSize,QE_INVALIDARG);
-        ulong dwTempSize = min(dwSize,m_dwDataSize-dwStartIndex);
-        CopyMemory(lpoutData,m_lpByteBuf+dwStartIndex,dwTempSize);
+        QRASSERT(m_lpByteBuf,QE_FAIL);
+        QRASSERT(lpoutData != nullptr &&  pDwReadCount != nullptr,QE_INVALIDARG);
+        QRASSERT(dwStartIndex <= m_dwDataSize,QE_INVALIDARG);
+        ulong dwTempSize = std::min(dwSize,m_dwDataSize-dwStartIndex);
+        memcmp(lpoutData,m_lpByteBuf+dwStartIndex,dwTempSize);
         *pDwReadCount = dwTempSize;
         return QS_OK;
     }
@@ -149,7 +153,7 @@ public:
         if (m_lpByteBuf == NULL)
         {
             m_lpByteBuf = m_bufMgr.Alloc(dwDesiredSize);
-            RASSERT(m_lpByteBuf,QE_FAIL);
+            QRASSERT(m_lpByteBuf,QE_FAIL);
         }
         else
         {
@@ -177,20 +181,19 @@ public:
     QSTDMETHOD(Clone)(QIBuffer** lpIBuufer)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(lpIBuufer != NULL,QE_INVALIDARG);
+        QRASSERT(lpIBuufer != NULL,QE_INVALIDARG);
 
         *lpIBuufer = NULL;
-        sentry<QBufferImp*> p(new QBufferImp(nullptr));
-        RASSERT(p, QE_UNEXPECTED);
+        QComPtr<QIBuffer> p(new QBufferImp(nullptr));
+        QRASSERT(p, QE_UNEXPECTED);
         p->Reserve(m_dwBufSize);
+
         uchar* lppoutData = NULL;
         ulong  dwDataSize = 0;
-        RFAILED(GetRawBuffer(&lppoutData,&dwDataSize));
+        QRFAILED(GetRawBuffer(&lppoutData,&dwDataSize));
         p->SetBuffer(lppoutData,dwDataSize,0);
-        ((QIUnknown*)p)->AddRef(); // nondelegation, protect reference count
-        QHRESULT hr = ((QIUnknown*)p)->QueryInterface(qt_uuidof(QIBuffer), (void **)lpIBuufer);
-        ((QIUnknown*)p.detach())->Release(); // nondelegation, balance reference count or destroy.
-        return hr;
+
+        return p->QueryInterface(qt_uuidof(QIBuffer), (void**)lpIBuufer);
     }
 
     QSTDMETHOD(AddTail)(uchar* lpBuf,ulong dwSize)
@@ -201,23 +204,22 @@ public:
     QSTDMETHOD(AddHead)(uchar* lpBuf,ulong dwSize)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(m_lpByteBuf,QE_FAIL);
-        RASSERT(lpBuf != NULL,QE_INVALIDARG);
+        QRASSERT(m_lpByteBuf,QE_FAIL);
+        QRASSERT(lpBuf != NULL,QE_INVALIDARG);
 
         if (dwSize + m_dwDataSize <=m_dwBufSize)
         {
-            CopyMemory(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
-            CopyMemory(m_lpByteBuf,lpBuf,dwSize);
+            memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
+            memcmp(m_lpByteBuf,lpBuf,dwSize);
         }
         else
         {
             ulong dwTempBufLen = dwSize + m_dwDataSize + DEFAULT_BLOCK_SIZE;
             m_lpByteBuf = m_bufMgr.ReAlloc(m_lpByteBuf, dwTempBufLen);
-            CopyMemory(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
-            CopyMemory(m_lpByteBuf,lpBuf,dwSize);
+             memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
+             memcmp(m_lpByteBuf,lpBuf,dwSize);
 
             m_dwBufSize = dwTempBufLen;
-
 
         }
 
@@ -233,7 +235,7 @@ public:
     QSTDMETHOD(SetDataSize)(ulong dwDataSize)
     {
         SRVATUOLOCK lock(m_lock);
-        RASSERT(dwDataSize<=m_dwBufSize,QE_FAIL);
+        QRASSERT(dwDataSize<=m_dwBufSize,QE_FAIL);
         m_dwDataSize = dwDataSize;
         return QS_OK;
     }

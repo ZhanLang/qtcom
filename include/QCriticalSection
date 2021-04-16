@@ -1,1 +1,1 @@
-#include"../qwlcom/criticalsection.h"
+#include"../qwlcom/qcriticalsection.h"
