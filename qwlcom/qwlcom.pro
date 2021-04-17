@@ -21,6 +21,7 @@ HEADERS += \
     qcomlibrary.h \
     qcommodule.h \
     qcomptr.h \
+    qplugincontainer.h \
     qpropertyset.h \
     qrunningobjecttable.h \
     qtcom.h \
@@ -29,6 +30,8 @@ HEADERS += \
     qunknwnimpl.h
 
 SOURCES += \
+    qclasscontainer.cpp \
     qcommodule.cpp \
+    qplugincontainer.cpp \
     qtcom.cpp \
     qtcomapplication.cpp

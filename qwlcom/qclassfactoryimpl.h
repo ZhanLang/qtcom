@@ -13,7 +13,7 @@
 #define QTCOM_BEGIN_CLIDMAP \
 extern "C" QHRESULT QEXPORT_API DllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls)\
 {\
-    QComPtr<QIUnknown> p; if( clsid.isNull() ) return QE_NOTIMPL;
+    QtComPtr<QIUnknown> p; if( clsid.isNull() ) return QE_NOTIMPL;
 
 #define QTCOM_END_CLIDMAP\
     if(p) return p->QueryInterface(iid, pCls); return QE_NOTIMPL;}
@@ -31,18 +31,27 @@ public:
         QTCOM_QUERYINTERFACE_ENTRY(QIClassFactory)
     QTCOM_QUERYINTERFACE_END
 
+    QTClsFactory()
+    {
+    }
 public:
     virtual QHRESULT STDMETHODCALL CreateInstance(const QIID& iid, void **ppv,QIUnknown *prot = QINull, void* parent=nullptr, QIUnknown *pUnkOuter = QINull)
     {
         QRASSERT(ppv, QE_INVALIDARG);
 
         *ppv = 0;
-        QComPtr<CLS> p(new CLS(parent));
+        CLS* p(new CLS(parent));
         QRASSERT(p, QE_UNEXPECTED);
-        QRFAILED(p->init_class(prot, pUnkOuter));
-        QRFAILED(p->QueryInterface(iid, ppv));
-        p.detach();
-        return QS_OK;
+        QHRESULT hr = p->init_class(prot, pUnkOuter);
+        if (QSUCCESSED(hr))
+        {
+            hr = p->QueryInterface(iid, ppv);
+            if (QSUCCESSED(hr))
+                return hr;
+        }
+       
+        delete p;
+        return hr;
     }
 
     virtual QHRESULT STDMETHODCALL LockServer(bool fLock)

@@ -18,6 +18,7 @@
 #define QE_NOTFIND                        (3005L)
 #define QE_EXIST                          (3006L)
 #define QE_RUNTIME                        (3007L)
+#define QE_NOROT                          (3008L)
 
 typedef QString QIID, QCLSID;
 typedef long QHRESULT;
@@ -75,14 +76,20 @@ struct QIRunningObjectTable : public QIUnknown
 };
 QT_DEFINE_IID(QIRunningObjectTable,"qtcom.i.running_object_table");
 
-QT_DEFINE_CLSID(CLSID_RunningObjectTable,"qcom.class.running_object_table");
+QT_DEFINE_CLSID(CLSID_QRunningObjectTable,"qcom.class.running_object_table");
 
 
 struct QIClassContainer : public QIUnknown
 {
-    QSTDMETHOD(GetClassObject)(const QCLSID& clsid,const QIID& iid, void **pCls) = 0;
+    QSTDMETHOD(CreateInstance)(const QCLSID& clsid,const QIID& iid, void **ppv, QIUnknown *prot = QINull,void* parent=nullptr, QIUnknown *pUnkOuter = QINull) = 0;
 
-    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& file) = 0;
+    QSTDMETHOD(GetClassObject)(const QCLSID& clsid,const QIID& factoryiid, void **pCls) = 0;
+
+    QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& libName) = 0;
+
+    QSTDMETHOD(registerModules)(const QByteArray& cfg) = 0;
+    QSTDMETHOD(registerModulesFile)(const QString& cfgfile) = 0;
+
     QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid) = 0;
 
     QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
@@ -90,23 +97,39 @@ struct QIClassContainer : public QIUnknown
 };
 QT_DEFINE_IID(QIClassContainer,"qtcom.i.class_container");
 
-QT_DEFINE_CLSID(CLSID_ClassContainer,"qtcom.class.class_container");
+QT_DEFINE_CLSID(CLSID_QClassContainer,"qtcom.class.class_container");
 
+
+struct QIPluginContainer : public QIUnknown
+{
+    QSTDMETHOD(registerPlugins)(const QByteArray& cfg) = 0;
+    QSTDMETHOD(registerPluginsFile)(const QString& cfgfile) = 0;
+
+    QSTDMETHOD(initPlugins)() = 0;
+    QSTDMETHOD(unInitPlugins)() = 0;
+
+    QSTDMETHOD(startPlugins)() = 0;
+    QSTDMETHOD(stopPlugins)(int returnCode) = 0;
+};
+QT_DEFINE_IID(QIPluginContainer,"qtcom.i.plugin_container");
+QT_DEFINE_CLSID(CLSID_QPluginContainer, "qtcom.class.plugin_container")
 
 struct QIPropertySet : public QIUnknown
 {
-    QSTDMETHOD_(QVariant,GetProperty)(const QString& key) = 0;
-    QSTDMETHOD(SetProperty)(const QString& key, const QVariant& value) = 0;
+    QSTDMETHOD_(QVariant,getProperty)(const QString& key) = 0;
+    QSTDMETHOD(addProperty)(const QString& key, const QVariant& value) = 0;
+    QSTDMETHOD(addProperty)(const QMap<QString, QVariant>& values) = 0;
 
     QSTDMETHOD_(bool,isPropertyExist)(const QString& key) = 0;
-    QSTDMETHOD_(QStringList,GetPropertyKeys)() = 0;
+    QSTDMETHOD_(QStringList,getPropertyKeys)() = 0;
 };
-QT_DEFINE_IID(QIPropertySet,"qtcombase.i.propertyset");
-QT_DEFINE_CLSID(CLSID_QPropertySet, "qtcombase.class.propertyset")
+QT_DEFINE_IID(QIPropertySet,"qtcom.i.propertyset");
+QT_DEFINE_CLSID(CLSID_QPropertySet, "qtcom.class.propertyset")
 
 struct QIApplication : public QIUnknown
 {
-    QSTDMETHOD(Exec)(const QString& cfgFile) = 0;
+    QSTDMETHOD(setConfigureFile)(const QString& cfgfile) = 0;
+    QSTDMETHOD(Exec)(int argc, char *argv[]) = 0;
     QSTDMETHOD(Quit)(int returnCode) = 0;
 
     QSTDMETHOD_(QIPropertySet*,getPropertySet)() = 0;

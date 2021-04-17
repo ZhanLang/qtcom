@@ -69,32 +69,32 @@ private:
 
 //com智能指针
 template<class I>
-struct QComPtr : sentry<I*, co_interface_sentry>
+struct QtComPtr : sentry<I*, co_interface_sentry>
 {
     typedef sentry<I*, co_interface_sentry> base;
     using base::m_p; // gcc 3.4
     // default construct:
-    QComPtr() : base() {}
+    QtComPtr() : base() {}
     // construct with:
     template<class U>
-        QComPtr(const QComPtr<U>& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
+        QtComPtr(const QtComPtr<U>& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
 #if(!IS_COMPILER_VC6)
-    QComPtr(const QComPtr& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
+    QtComPtr(const QtComPtr& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
     template<class U>
-        QComPtr(const sentry<U*, co_interface_sentry>& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
+        QtComPtr(const sentry<U*, co_interface_sentry>& rhs) : base() { if(rhs.m_p && QFAILED(rhs.m_p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; } // gcc
 #endif
     template<class U>
-        QComPtr(U *p) : base() { if(p && QFAILED(p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; }
+        QtComPtr(U *p) : base() { if(p && QFAILED(p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; }
     // operator =:
     template<class U>
-        QComPtr& operator = (const QComPtr<U>& rhs) { if((void*)m_p != (void*)rhs.m_p) *this = rhs.m_p; return *this; }
+        QtComPtr& operator = (const QtComPtr<U>& rhs) { if((void*)m_p != (void*)rhs.m_p) *this = rhs.m_p; return *this; }
 #if(!IS_COMPILER_VC6)
-    QComPtr& operator = (const QComPtr& rhs) { if(m_p != rhs.m_p) *this = rhs.m_p; return *this; }
+    QtComPtr& operator = (const QtComPtr& rhs) { if(m_p != rhs.m_p) *this = rhs.m_p; return *this; }
     template<class U>
-        QComPtr& operator = (const sentry<U*, co_interface_sentry>& rhs) { if((void*)m_p != (void*)rhs.m_p) *this = rhs.m_p; return *this; }
+        QtComPtr& operator = (const sentry<U*, co_interface_sentry>& rhs) { if((void*)m_p != (void*)rhs.m_p) *this = rhs.m_p; return *this; }
 #endif
     template<class U>
-        QComPtr& operator = (U *p) { if((void*)m_p == (void*)p) return *this; base::operator=(0); if(p && QFAILED(p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; return *this; }
+        QtComPtr& operator = (U *p) { if((void*)m_p == (void*)p) return *this; base::operator=(0); if(p && QFAILED(p->QueryInterface(qt_uuidof(I), (void**)&m_p))) m_p = 0; return *this; }
 };
 
 #endif

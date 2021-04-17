@@ -19,7 +19,7 @@ public:
 
     }
 protected:
-    QSTDMETHOD_(QVariant,GetProperty)(const QString& key)
+    QSTDMETHOD_(QVariant,getProperty)(const QString& key)
     {
         QMutexLocker locker(&m_mutex);
         if( m_props.contains(key))
@@ -28,10 +28,20 @@ protected:
         return QVariant();
     }
 
-    QSTDMETHOD(SetProperty)(const QString& key, const QVariant& value)
+    QSTDMETHOD(addProperty)(const QString& key, const QVariant& value)
     {
         QMutexLocker locker(&m_mutex);
          m_props.insert(key, value);
+         return QS_OK;
+    }
+
+    QSTDMETHOD(addProperty)(const QMap<QString, QVariant>& values)
+    {
+        QMap<QString, QVariant>::ConstIterator it = values.constBegin();
+        for( ; it != values.constEnd(); it++)
+        {
+            addProperty(it.key(),it.value());
+        }
          return QS_OK;
     }
 
@@ -41,7 +51,7 @@ protected:
         return m_props.contains(key);
     }
 
-    QSTDMETHOD_(QStringList,GetPropertyKeys)()
+    QSTDMETHOD_(QStringList,getPropertyKeys)()
     {
         QMutexLocker locker(&m_mutex);
         return m_props.keys();

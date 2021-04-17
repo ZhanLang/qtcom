@@ -184,7 +184,7 @@ public:
         QRASSERT(lpIBuufer != NULL,QE_INVALIDARG);
 
         *lpIBuufer = NULL;
-        QComPtr<QIBuffer> p(new QBufferImp(nullptr));
+        QtComPtr<QIBuffer> p(new QBufferImp(nullptr));
         QRASSERT(p, QE_UNEXPECTED);
         p->Reserve(m_dwBufSize);
 

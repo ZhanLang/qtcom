@@ -35,10 +35,10 @@ public:
         QLibrary::unload();
     }
 
-    QHRESULT DllGetClassObject(const QCLSID& clsid, const QIID& iid, void** pCls)
+    QHRESULT DllGetClassObject(const QCLSID& clsid, const QIID& factoryiid, void** pCls)
     {
         if( m_func )
-            return m_func( clsid, iid, pCls);
+            return m_func( clsid, factoryiid, pCls);
 
         return QE_NOTFIND;
     }

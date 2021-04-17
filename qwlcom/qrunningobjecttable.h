@@ -69,7 +69,7 @@ public:
 
 private:
     QMutex m_mutex;
-    QMap<QCLSID, QComPtr<QIUnknown>> m_objs;
+    QMap<QCLSID, QtComPtr<QIUnknown>> m_objs;
 };
 
 #endif // QRUNNINGOBJECTTABLE_H

@@ -13,30 +13,31 @@ public:
         QTCOM_QUERYINTERFACE_ENTRY(QIApplication)
     QTCOM_QUERYINTERFACE_END
 
-    QHRESULT init_class( QIUnknown* , QIUnknown* )
-    {
-        return QS_OK;
-    }
+    QHRESULT init_class( QIUnknown* , QIUnknown* );
 
     QtComApplication( void * );
     ~QtComApplication();
 
 protected:
-    QSTDMETHOD(Exec)(const QString& cfgFile);
+    QSTDMETHOD(setConfigureFile)(const QString& cfgfile);
+    QSTDMETHOD(Exec)(int argc, char *argv[]);
     QSTDMETHOD(Quit)(int returnCode);
 
     QSTDMETHOD_(QIPropertySet*,getPropertySet)();
     QSTDMETHOD_(QIRunningObjectTable*,getRunningObjectTable)();
 
+    QSTDMETHOD(setConfigure)(const QByteArray& cfgfile);
 private:
     QHRESULT load(const QString& cfgFile);
     void initPropterty( QJsonDocument& doc);
-    QHRESULT loadModule(const QString& file);
-    QHRESULT loadClass(const QString& cfgPath, QJsonObject& doc);
+    QHRESULT initModule(QJsonDocument& doc);
+    QHRESULT initPlugin(QJsonDocument& doc);
+
 private:
-    QComPtr<QIRunningObjectTable> m_rot;
-    QComPtr<QIPropertySet> m_prop;
-    QComPtr<QIClassContainer> m_clsContainer;
+    QtComPtr<QIRunningObjectTable> m_rot;
+    QtComPtr<QIPropertySet> m_prop;
+    QtComPtr<QIClassContainer> m_clsContainer;
+    QtComPtr<QIPluginContainer> m_pluginContainer;
 };
 
 #endif // QTCOMAPPLICATION_H

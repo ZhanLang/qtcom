@@ -3,10 +3,5 @@
 
 #include "qtcom_global.h"
 
-class QTCOM_EXPORT Qtcom
-{
-public:
-    Qtcom();
-};
 
 #endif // QTCOM_H
