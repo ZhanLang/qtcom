@@ -52,7 +52,7 @@ inline const QIID& _luuidof<iface>(){\
 #define qt_uuidof(X) _luuidof<X>()
 
 #define QT_DEFINE_CLSID(name, clsid_string) \
-     static const char* name = clsid_string;\
+     static const QString name = QString::fromLatin1(clsid_string);\
 
 struct QIUnknown
 {
@@ -88,7 +88,8 @@ struct QIClassContainer : public QIUnknown
     QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& libName) = 0;
 
     QSTDMETHOD(registerModules)(const QByteArray& cfg) = 0;
-    QSTDMETHOD(registerModulesFile)(const QString& cfgfile) = 0;
+    QSTDMETHOD(registerModulesFile)(const QString& file) = 0;
+    QSTDMETHOD(registerModulesFiles)(const QStringList& files) = 0;
 
     QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid) = 0;
 
@@ -103,7 +104,8 @@ QT_DEFINE_CLSID(CLSID_QClassContainer,"qtcom.class.class_container");
 struct QIPluginContainer : public QIUnknown
 {
     QSTDMETHOD(registerPlugins)(const QByteArray& cfg) = 0;
-    QSTDMETHOD(registerPluginsFile)(const QString& cfgfile) = 0;
+    QSTDMETHOD(registerPluginsFile)(const QString& file) = 0;
+    QSTDMETHOD(registerPluginsFiles)(const QStringList& files) = 0;
 
     QSTDMETHOD(initPlugins)() = 0;
     QSTDMETHOD(unInitPlugins)() = 0;

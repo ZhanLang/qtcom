@@ -23,6 +23,13 @@ QSTDMETHOD_IMPL QPluginContainer::registerPluginsFile(const QString& cfgfile)
     return QS_OK;
 }
 
+
+QSTDMETHOD_IMPL QPluginContainer::registerPluginsFiles(const QStringList& files)
+{
+    return QS_OK;
+}
+
+
 QSTDMETHOD_IMPL QPluginContainer::initPlugins()
 {
     return QS_OK;

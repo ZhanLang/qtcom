@@ -63,7 +63,7 @@ QSTDMETHOD_IMPL QClassContainer::Register(const QCLSID& clsid, const QString& pa
 {
     QMutexLocker locker(&m_mutex);
     if( m_clsobjs.contains(clsid))
-        return QE_EXIST;
+        return QS_OK;
 
 
 #ifdef Q_OS_WIN
@@ -116,10 +116,25 @@ QSTDMETHOD_IMPL QClassContainer::registerModules(const QByteArray& cfg)
 QSTDMETHOD_IMPL QClassContainer::registerModulesFile(const QString& cfgfile)
 {
     QFile jsonFile(cfgfile);
-    if(jsonFile.open(QFile::ReadOnly))
+    if(!jsonFile.open(QFile::ReadOnly))
         return QE_INVALIDARG;
 
     return registerModules( jsonFile.readAll() );
+}
+
+QSTDMETHOD_IMPL QClassContainer::registerModulesFiles(const QStringList& files)
+{
+    for (const QString& file : files)
+    {
+        QHRESULT hResult = registerModulesFile(file);
+        if (QFAILED(hResult))
+        {
+            //todo:
+            return hResult;
+        }
+    }
+
+    return QS_OK;
 }
 
 QSTDMETHOD_IMPL_(bool)QClassContainer::isRegistered(const QCLSID& clsid)

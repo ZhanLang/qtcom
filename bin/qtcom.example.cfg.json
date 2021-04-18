@@ -4,43 +4,17 @@
 		"key2": "value2"
 	},
 	"module.files": [
-		{
-			"file": "./plugin.json",
-			"relative": true
-		},
-		{
-			"file": "./plugin.json",
-			"relative": true
-		}
+		"./qtcom.modules/qtcom.module.qtcombase.json"
 	],
 	"module.paths": [
-		{
-			"path": "/opt/files",
-			"suffix": "json"
-		},
-		{
-			"path": "/opt/files",
-			"suffix": "json"
-		}
+		"./qtcom.modules/"
 	],
 	"plugin.files": [
-		{
-			"file": "./plugin.json",
-			"relative": true
-		},
-		{
-			"file": "./plugin.json",
-			"relative": true
-		}
+		"./plugin.json",
+		"./plugin.json"
 	],
 	"plugin.paths": [
-		{
-			"path": "/opt/files",
-			"suffix": "json"
-		},
-		{
-			"path": "/opt/files",
-			"suffix": "json"
-		}
+		"./plugin.json",
+		"./plugin.json"
 	]
 }

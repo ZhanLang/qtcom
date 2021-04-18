@@ -64,6 +64,9 @@ QSTDMETHOD_IMPL QtComApplication::setConfigure(const QByteArray& cfg)
 
     initPropterty(jsoncfg);
 
+    QRFAILED(initModules(jsoncfg));
+    
+
     return QS_OK;
 }
 
@@ -104,10 +107,72 @@ void QtComApplication::initPropterty(QJsonDocument &doc)
     }
 }
 
-QHRESULT initModule(QJsonDocument &doc)
+QHRESULT QtComApplication::initModules(QJsonDocument& doc)
 {
+    QJsonObject o = doc.object();
+    for (QJsonValue v : o.value("module.files").toArray())
+    {
+        QString file = v.toString();
+        QHRESULT hr = m_clsContainer->registerModulesFile(file);
+        if (QFAILED(hr))
+        {
+            return hr;
+        }
+    }
+
+    for (QJsonValue v : o.value("module.paths").toArray())
+    {
+        QStringList files = enumerate_jsonfile(v.toString());
+        QHRESULT hr = m_clsContainer->registerModulesFiles(files);
+        if (QFAILED(hr))
+        {
+            return hr;
+        }
+    }
+
     return QS_OK;
 }
+
+QHRESULT QtComApplication::initPlugins(QJsonDocument& doc)
+{
+    QJsonObject o = doc.object();
+    for (QJsonValue v : o.value("plugin.files").toArray())
+    {
+        QString file = v.toString();
+        QHRESULT hr = m_pluginContainer->registerPluginsFile(file);
+        if (QFAILED(hr))
+        {
+            return hr;
+        }
+    }
+
+    for (QJsonValue v : o.value("plugin.files").toArray())
+    {
+        QStringList files = enumerate_jsonfile(v.toString());
+        QHRESULT hr = m_pluginContainer->registerPluginsFiles(files);
+        if (QFAILED(hr))
+        {
+            return hr;
+        }
+    }
+    return QS_OK;
+}
+
+QStringList QtComApplication::enumerate_jsonfile(const QString& path)
+{
+    QDir dir(path);
+    QStringList nameFilters;
+    nameFilters << "*.json";
+
+    QStringList files;
+    QFileInfoList li = dir.entryInfoList(nameFilters, QDir::Files | QDir::Readable, QDir::Name);
+    for (QFileInfo info : li)
+    {
+        files.append(info.absoluteFilePath());
+    }
+    return files;
+}
+
 
 QHRESULT initPlugin(QJsonDocument &doc)
 {

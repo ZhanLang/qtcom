@@ -30,9 +30,10 @@ protected:
 private:
     QHRESULT load(const QString& cfgFile);
     void initPropterty( QJsonDocument& doc);
-    QHRESULT initModule(QJsonDocument& doc);
-    QHRESULT initPlugin(QJsonDocument& doc);
+    QHRESULT initModules(QJsonDocument& doc);
+    QHRESULT initPlugins(QJsonDocument& doc);
 
+    QStringList enumerate_jsonfile(const QString& path);
 private:
     QtComPtr<QIRunningObjectTable> m_rot;
     QtComPtr<QIPropertySet> m_prop;

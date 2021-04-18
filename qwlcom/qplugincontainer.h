@@ -19,6 +19,7 @@ public:
 protected:
     QSTDMETHOD(registerPlugins)(const QByteArray& cfg);
     QSTDMETHOD(registerPluginsFile)(const QString& cfgfile);
+    QSTDMETHOD(registerPluginsFiles)(const QStringList& cfgfile);
 
     QSTDMETHOD(initPlugins)();
     QSTDMETHOD(unInitPlugins)();

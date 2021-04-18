@@ -30,7 +30,8 @@ public:
 
     QSTDMETHOD(registerModules)(const QByteArray& cfg);
 
-    QSTDMETHOD(registerModulesFile)(const QString& cfgfile);
+    QSTDMETHOD(registerModulesFile)(const QString& file);
+    QSTDMETHOD(registerModulesFiles)(const QStringList& files);
 
     QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid);
 
