@@ -12,7 +12,7 @@ class QRunningObjectTableImpl: public QIRunningObjectTable, public QUnknownImp
 public:
     QTCOM_ADDREF_RELEASE;
     QTCOM_QUERYINTERFACE_BEGIN(QIRunningObjectTable)
-        QTCOM_QUERYINTERFACE_ENTRY(QIRunningObjectTable)
+    	QTCOM_QUERYINTERFACE_ENTRY(QIRunningObjectTable)
     QTCOM_QUERYINTERFACE_END;
 
     QRunningObjectTableImpl(void*)
@@ -25,13 +25,21 @@ public:
         return QS_OK;
     }
 
+    QSTDMETHOD(CreateInstance)(const QCLSID& clsid,const QIID& iid, void **ppv,void* parent=nullptr, QIUnknown *pUnkOuter = QINull)
+    {
+        QtComPtr<QIClassContainer> cclass;
+        QRFAILED(GetObject( CLSID_QClassContainer, qt_uuidof(QIClassContainer), (void**)&cclass.m_p));
+
+        return cclass->CreateInstance(clsid, iid, ppv, (QIUnknown*)((QIRunningObjectTable*)this), parent, pUnkOuter);
+    }
+
     QSTDMETHOD(GetObject)(const QCLSID& clsid, const QIID& iid, void **ppunk)
     {
         QMutexLocker locker(&m_mutex);
         if( !m_objs.contains(clsid))
             return QE_NOTFIND;
 
-       return m_objs[clsid]->QueryInterface(iid, ppunk);
+        return m_objs[clsid]->QueryInterface(iid, ppunk);
     }
 
     QSTDMETHOD(Register)(const QCLSID& clsid, QIUnknown* punk)

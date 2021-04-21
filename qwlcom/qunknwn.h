@@ -66,6 +66,8 @@ QT_DEFINE_IID(QIUnknown,"qtcom.i.unknow");
 
 struct QIRunningObjectTable : public QIUnknown
 {
+    QSTDMETHOD(CreateInstance)(const QCLSID& clsid,const QIID& iid, void **ppv,void* parent=nullptr, QIUnknown *pUnkOuter = QINull) = 0;
+
     QSTDMETHOD(GetObject)(const QCLSID& clsid, const QIID& iid, void **ppunk) = 0;
 
     QSTDMETHOD(Register)(const QCLSID& clsid, QIUnknown* punk) = 0;
@@ -87,11 +89,11 @@ struct QIClassContainer : public QIUnknown
 
     QSTDMETHOD(Register)(const QCLSID& clsid, const QString& path, const QString& libName) = 0;
 
+    QSTDMETHOD_(bool, isRegistered)(const QCLSID& clsid) = 0;
+
     QSTDMETHOD(registerModules)(const QByteArray& cfg) = 0;
     QSTDMETHOD(registerModulesFile)(const QString& file) = 0;
     QSTDMETHOD(registerModulesFiles)(const QStringList& files) = 0;
-
-    QSTDMETHOD_(bool,isRegistered)(const QCLSID& clsid) = 0;
 
     QSTDMETHOD(Revoke)(const QCLSID& clsid) = 0;
     QSTDMETHOD_(void,RevokeAll)() = 0;
@@ -107,11 +109,13 @@ struct QIPluginContainer : public QIUnknown
     QSTDMETHOD(registerPluginsFile)(const QString& file) = 0;
     QSTDMETHOD(registerPluginsFiles)(const QStringList& files) = 0;
 
+    QSTDMETHOD_(bool, isRegistered)(const QCLSID& clsid) = 0;
+
     QSTDMETHOD(initPlugins)() = 0;
-    QSTDMETHOD(unInitPlugins)() = 0;
+    QSTDMETHOD(unInitPlugins)(int returnCode) = 0;
 
     QSTDMETHOD(startPlugins)() = 0;
-    QSTDMETHOD(stopPlugins)(int returnCode) = 0;
+    QSTDMETHOD(stopPlugins)() = 0;
 };
 QT_DEFINE_IID(QIPluginContainer,"qtcom.i.plugin_container");
 QT_DEFINE_CLSID(CLSID_QPluginContainer, "qtcom.class.plugin_container")

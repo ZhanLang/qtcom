@@ -12,7 +12,7 @@
 extern "C" QHRESULT  DllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls);
 QtComApplication::QtComApplication(void * )
 {
-    m_clsContainer = new QClassContainer(nullptr);
+    m_cclass = new QClassContainer(nullptr);
 }
 
 QtComApplication::~QtComApplication()
@@ -23,23 +23,23 @@ QtComApplication::~QtComApplication()
 
 QHRESULT QtComApplication::init_class(QIUnknown*, QIUnknown *)
 {
-    if( !m_clsContainer )
+    if( !m_cclass )
         return QE_RUNTIME;
 
-    QRFAILED(m_clsContainer->CreateInstance( CLSID_QRunningObjectTable,
-                                              qt_uuidof(QIRunningObjectTable),
-                                              (void**)&m_rot.m_p));
+    QRFAILED(m_cclass->CreateInstance( CLSID_QRunningObjectTable,
+                                       qt_uuidof(QIRunningObjectTable),
+                                       (void**)&m_rot.m_p));
 
     QRFAILED(m_rot->Register(CLSID_QClassContainer,
-                             (QIUnknown*)((QIClassContainer*)m_clsContainer)));
+                             (QIUnknown*)((QIClassContainer*)m_cclass)));
 
-    QRFAILED(m_clsContainer->CreateInstance( CLSID_QPropertySet,
-                                             qt_uuidof(QIPropertySet),
-                                             (void**)&m_prop.m_p));
+    QRFAILED(m_cclass->CreateInstance( CLSID_QPropertySet,
+                                       qt_uuidof(QIPropertySet),
+                                       (void**)&m_prop.m_p));
 
-    QRFAILED(m_clsContainer->CreateInstance( CLSID_QPluginContainer,
-                                             qt_uuidof(QIPluginContainer),
-                                            (void**)&m_pluginContainer.m_p, m_rot));
+    QRFAILED(m_cclass->CreateInstance( CLSID_QPluginContainer,
+                                       qt_uuidof(QIPluginContainer),
+                                       (void**)&m_plugins.m_p, m_rot));
 
     QRFAILED(m_rot->Register(CLSID_QtApplaction, (QIUnknown*)((QIApplication*)this)));
 
@@ -64,8 +64,17 @@ QSTDMETHOD_IMPL QtComApplication::setConfigure(const QByteArray& cfg)
 
     initPropterty(jsoncfg);
 
-    QRFAILED(initModules(jsoncfg));
-    
+    QHRESULT hr = initModules(jsoncfg);
+    if( QFAILED(hr) )
+    {
+        return hr;
+    }
+
+    hr = initPlugins(jsoncfg);
+    if( QFAILED(hr))
+    {
+        return hr;
+    }
 
     return QS_OK;
 }
@@ -74,12 +83,43 @@ QSTDMETHOD_IMPL QtComApplication::Exec(int argc, char *argv[])
 {
     Q_UNUSED(argc) Q_UNUSED(argv)
 
+    QHRESULT hr = m_plugins->initPlugins();
+    if( QFAILED(hr) )
+    {
+        return hr;
+    }
+
+    hr = m_plugins->startPlugins();
+    if( QFAILED(hr))
+    {
+        return hr;
+    }
 
     return QS_OK;
 }
 
 QSTDMETHOD_IMPL QtComApplication::Quit(int returnCode)
 {
+    if( m_plugins )
+    {
+        m_plugins->stopPlugins();
+        m_plugins->unInitPlugins(returnCode);
+        m_plugins = QINull;
+    }
+
+    if( m_rot )
+    {
+        m_rot->RevokeAll();
+        m_rot = QINull;
+    }
+
+    if( m_cclass )
+    {
+        m_cclass->RevokeAll();
+        m_cclass = QINull;
+    }
+
+    m_prop = QINull;
     return QS_OK;
 }
 
@@ -101,10 +141,7 @@ void QtComApplication::initPropterty(QJsonDocument &doc)
         return;
 
     QJsonObject o = v.toObject();
-    for( const QString& key : o.keys())
-    {
-        m_prop->addProperty(key, o.value(key).toVariant());
-    }
+    m_prop->addProperty(o.toVariantMap());
 }
 
 QHRESULT QtComApplication::initModules(QJsonDocument& doc)
@@ -113,7 +150,7 @@ QHRESULT QtComApplication::initModules(QJsonDocument& doc)
     for (QJsonValue v : o.value("module.files").toArray())
     {
         QString file = v.toString();
-        QHRESULT hr = m_clsContainer->registerModulesFile(file);
+        QHRESULT hr = m_cclass->registerModulesFile(file);
         if (QFAILED(hr))
         {
             return hr;
@@ -123,7 +160,7 @@ QHRESULT QtComApplication::initModules(QJsonDocument& doc)
     for (QJsonValue v : o.value("module.paths").toArray())
     {
         QStringList files = enumerate_jsonfile(v.toString());
-        QHRESULT hr = m_clsContainer->registerModulesFiles(files);
+        QHRESULT hr = m_cclass->registerModulesFiles(files);
         if (QFAILED(hr))
         {
             return hr;
@@ -139,7 +176,7 @@ QHRESULT QtComApplication::initPlugins(QJsonDocument& doc)
     for (QJsonValue v : o.value("plugin.files").toArray())
     {
         QString file = v.toString();
-        QHRESULT hr = m_pluginContainer->registerPluginsFile(file);
+        QHRESULT hr = m_plugins->registerPluginsFile(file);
         if (QFAILED(hr))
         {
             return hr;
@@ -149,7 +186,7 @@ QHRESULT QtComApplication::initPlugins(QJsonDocument& doc)
     for (QJsonValue v : o.value("plugin.files").toArray())
     {
         QStringList files = enumerate_jsonfile(v.toString());
-        QHRESULT hr = m_pluginContainer->registerPluginsFiles(files);
+        QHRESULT hr = m_plugins->registerPluginsFiles(files);
         if (QFAILED(hr))
         {
             return hr;
@@ -172,11 +209,4 @@ QStringList QtComApplication::enumerate_jsonfile(const QString& path)
     }
     return files;
 }
-
-
-QHRESULT initPlugin(QJsonDocument &doc)
-{
-return QS_OK;
-}
-
 

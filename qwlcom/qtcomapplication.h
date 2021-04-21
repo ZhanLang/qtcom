@@ -37,8 +37,8 @@ private:
 private:
     QtComPtr<QIRunningObjectTable> m_rot;
     QtComPtr<QIPropertySet> m_prop;
-    QtComPtr<QIClassContainer> m_clsContainer;
-    QtComPtr<QIPluginContainer> m_pluginContainer;
+    QtComPtr<QIClassContainer> m_cclass;
+    QtComPtr<QIPluginContainer> m_plugins;
 };
 
 #endif // QTCOMAPPLICATION_H
