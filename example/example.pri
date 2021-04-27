@@ -12,3 +12,9 @@ SOURCES += ./example.cpp \
     ./main.cpp
 FORMS += ./example.ui
 RESOURCES += example.qrc
+
+OTHER_FILES += \
+    ../bin/qtcom.example.cfg.json \
+    ../bin/qtcom.plugin.main.json \
+    ../bin/qtcom.modules/qtcom.module.qtcombase.json
+

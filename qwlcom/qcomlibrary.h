@@ -5,7 +5,7 @@
 
 class QComLibrary : public QLibrary
 {
-    typedef int (*DllGetClassObjectFunc)(const QCLSID& , const QIID& , void** );
+    typedef int (*QtComDllGetClassObjectFunc)(const QCLSID& , const QIID& , void** );
 public:
     QComLibrary():m_func(nullptr)
     {
@@ -23,7 +23,7 @@ public:
         if( !QLibrary::load() )
             return false;
 
-        m_func = (DllGetClassObjectFunc) QLibrary::resolve("DllGetClassObject");
+        m_func = (QtComDllGetClassObjectFunc) QLibrary::resolve("QtComDllGetClassObject");
         if( !m_func )
             return false;
 
@@ -45,7 +45,7 @@ public:
 
 
 private:
-    DllGetClassObjectFunc m_func;
+    QtComDllGetClassObjectFunc m_func;
 
 };
 

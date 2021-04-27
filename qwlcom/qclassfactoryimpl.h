@@ -11,7 +11,7 @@
 #endif
 
 #define QTCOM_BEGIN_CLIDMAP \
-extern "C" QHRESULT QEXPORT_API DllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls)\
+extern "C" QHRESULT QEXPORT_API QtDllGetClassObject( const QCLSID& clsid, const QIID& iid, void** pCls)\
 {\
     QtComPtr<QIUnknown> p; if( clsid.isNull() ) return QE_NOTIMPL;
 

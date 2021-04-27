@@ -5,10 +5,9 @@
 #include<QFile>
 #include<QLibrary>
 #include "qunknwnimpl.h"
-#include"qcomlibrary.h"
 #include"qcomptr.h"
 
-
+typedef int (*QtDllGetClassObjectFunc)(const QCLSID&, const QIID&, void**);
 class QClassContainer : public QIClassContainer , private QUnknownImp
 {
 public:
@@ -41,7 +40,7 @@ public:
 
 private:
     QMutex m_mutex;
-    QHash<QCLSID, QComLibrary*> m_clsobjs;
+    QHash<QCLSID, QString> m_clsobjs;
 };
 
 #endif // QCLASSOBJECTS_H
