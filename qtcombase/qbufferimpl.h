@@ -109,7 +109,7 @@ public:
 
         if (dwSize + dwStartIndex <=m_dwBufSize)
         {
-            memcmp(m_lpByteBuf+dwStartIndex,lpBuf,dwSize);
+            (void)memcmp(m_lpByteBuf+dwStartIndex,lpBuf,dwSize);
         }
         else
         {
@@ -135,7 +135,7 @@ public:
         QRASSERT(lpoutData != nullptr &&  pDwReadCount != nullptr,QE_INVALIDARG);
         QRASSERT(dwStartIndex <= m_dwDataSize,QE_INVALIDARG);
         ulong dwTempSize = std::min(dwSize,m_dwDataSize-dwStartIndex);
-        memcmp(lpoutData,m_lpByteBuf+dwStartIndex,dwTempSize);
+        (void)memcmp(lpoutData,m_lpByteBuf+dwStartIndex,dwTempSize);
         *pDwReadCount = dwTempSize;
         return QS_OK;
     }
@@ -209,15 +209,15 @@ public:
 
         if (dwSize + m_dwDataSize <=m_dwBufSize)
         {
-            memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
-            memcmp(m_lpByteBuf,lpBuf,dwSize);
+            (void)memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
+            (void)memcmp(m_lpByteBuf,lpBuf,dwSize);
         }
         else
         {
             ulong dwTempBufLen = dwSize + m_dwDataSize + DEFAULT_BLOCK_SIZE;
             m_lpByteBuf = m_bufMgr.ReAlloc(m_lpByteBuf, dwTempBufLen);
-             memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
-             memcmp(m_lpByteBuf,lpBuf,dwSize);
+            (void)memcmp(m_lpByteBuf+dwSize,m_lpByteBuf,m_dwDataSize);
+            (void)memcmp(m_lpByteBuf,lpBuf,dwSize);
 
             m_dwBufSize = dwTempBufLen;
 

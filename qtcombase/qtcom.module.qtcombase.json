@@ -1,0 +1,18 @@
+[
+    {
+        "moduleid":"com.module.qtcombase",
+        "libpath": "./qtcom.modules/",
+        "libname": "qtcombase",
+        "description": "qtcom base module",
+        "class": [
+            {
+                "clsid": "qtcom.class.propertyset",
+                "description": "property set class."
+            },
+            {
+                "clsid": "qtcom.class.safebuffer",
+                "description": "this is a safe buff object."
+            }
+        ]
+    }
+]
