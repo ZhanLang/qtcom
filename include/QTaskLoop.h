@@ -19,6 +19,8 @@ struct QITaskCommand: public QIUnknown
     virtual QString getName() const = 0;
 
     virtual QErrorCode run() = 0;
+    virtual void cancel() = 0;
+
     virtual bool isCancel() = 0;
 
     virtual void setContext(const QString& id, QITaskCommandContext* context) = 0;

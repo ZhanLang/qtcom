@@ -10,8 +10,8 @@ public:
           m_e(QErrorCode::Canceled)
     {
         setAutoDelete(true);
-
     }
+
     virtual ~QTaskQRunnable()
     {
         if (m_cmd)
@@ -21,6 +21,8 @@ public:
             else
                 m_cmd->reslove();
         }
+
+        m_cmd = QINull;
     }
 
     virtual void run()
@@ -80,6 +82,7 @@ public:
     QTCOM_QUERYINTERFACE_BEGIN(QITaskCommandContext)
         QTCOM_QUERYINTERFACE_ENTRY(QITaskCommandContext)
     QTCOM_QUERYINTERFACE_END
+
     QHRESULT init_class( QIUnknown* ,QIUnknown*)
     {
         return QS_OK;
@@ -124,7 +127,7 @@ void QThreadPoolTaskLoopImpl::exec(QITaskCommand *task)
     if( !task )
         return;
 
-    task->setContext("threadpoolImpl", m_context);
+    task->setContext("qtcom.threadpoolImpl", m_context);
 
     QTaskQRunnable* r = new QTaskQRunnable(task);
     if ( r )
