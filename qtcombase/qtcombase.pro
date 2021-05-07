@@ -14,13 +14,16 @@ INCLUDEPATH+= ../include
 
 
 SOURCES += \
-    qtcombase.cpp
+    qtcombase.cpp \
+    qthreadpooltaskloopimpl.cpp
 
 HEADERS += \
     qbufferimpl.h \
     qibuffer.h \
     qtcombase_global.h \
-    qtcombase.h
+    qtcombase.h \
+    qthreadpooltaskloopimpl.h \
+    ../include/QTaskCommandBase.h \
 
 TRANSLATIONS += \
     qtcombase_zh_CN.ts
@@ -29,15 +32,16 @@ OTHER_FILES+= \
     $$PWD/qtcom.module.qtcombase.json
 
 
-# Default rules for deployment.
 unix {
     target.path = /usr/lib
 }
+
 !isEmpty(target.path): INSTALLS += target
 
 unix{
     QMAKE_POST_LINK+= copy /y $$PWD/qtcom.module.qtcombase.json $$DESTDIR/qtcom.modules/
 }
+
 win32{
     DESTDIR_WIN = $$replace(DESTDIR, "/", "\\")
     PWD_WIN = $$replace(PWD, "/", "\\")

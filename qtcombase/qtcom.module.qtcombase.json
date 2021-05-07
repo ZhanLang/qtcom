@@ -12,6 +12,10 @@
             {
                 "clsid": "qtcom.class.safebuffer",
                 "description": "this is a safe buff object."
+            },
+            {
+                "clsid": "qtcom.class.threadpoolCommandLoop",
+                "description": "a thread pool command loop"
             }
         ]
     }

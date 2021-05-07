@@ -37,7 +37,7 @@ typedef int (*QtDllGetClassObjectFunc)(const QCLSID& , const QIID& , void** );
 QSTDMETHOD_IMPL QClassContainer::GetClassObject(const QCLSID& clsid, const QIID& iid,void **ppv)
 {
     if( clsid == CLSID_QPluginContainer     ||
-        clsid == CLSID_QRunningObjectTable   ||
+        clsid == CLSID_QRunningObjectTable  ||
         clsid == CLSID_QPropertySet         ||
         clsid == CLSID_QtApplaction
       )
