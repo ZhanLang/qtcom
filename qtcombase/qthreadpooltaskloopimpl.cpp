@@ -127,7 +127,7 @@ void QThreadPoolTaskLoopImpl::exec(QITaskCommand *task)
     if( !task )
         return;
 
-    task->setContext("qtcom.threadpoolImpl", m_context);
+    task->addContext(m_context);
 
     QTaskQRunnable* r = new QTaskQRunnable(task);
     if ( r )

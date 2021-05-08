@@ -23,9 +23,8 @@ struct QITaskCommand: public QIUnknown
 
     virtual bool isCancel() = 0;
 
-    virtual void setContext(const QString& id, QITaskCommandContext* context) = 0;
-    virtual void getContext(const QString& id, QITaskCommandContext** context);
-    virtual void removeContext(const QString& id);
+    virtual void addContext(QITaskCommandContext* context) = 0;
+    virtual void removeContext(QITaskCommandContext* context) = 0;
 
     virtual void reslove() = 0;
     virtual void reject(const QErrorCode& code) = 0;

@@ -8,8 +8,39 @@
 #include"../qwlcom/qrunningobjecttable.h"
 #include"../qwlcom/qclasscontainer.h"
 #include"../qwlcom/qcomlibrary.h"
+#include<QTaskCommandBase.h>
 
 typedef int (*QtDllGetClassObjectFunc)(const QCLSID& , const QIID& , void** );
+
+class QTestCommand : public QTaskCommandBase{
+public:
+    QErrorCode run(){
+        return QErrorCode::Ok;
+    }
+};
+
+class QTestCommandContext :public QITaskCommandContext,public QUnknownImp
+{
+public:
+    QTCOM_ADDREF_RELEASE
+    QTCOM_QUERYINTERFACE_BEGIN(QITaskCommandContext)
+        QTCOM_QUERYINTERFACE_ENTRY(QITaskCommandContext)
+    QTCOM_QUERYINTERFACE_END
+
+    QTestCommandContext():m_cancel(false){
+
+    }
+    virtual bool isCancel() const{
+        return m_cancel;
+    }
+
+    virtual void cancel() {
+        m_cancel = true;
+    }
+
+private:
+    bool m_cancel;
+};
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +48,11 @@ int main(int argc, char *argv[])
 
     QtComPtr<QIRunningObjectTable> pRot;
 
+
+     QtComPtr< QITaskCommandContext> taskcmdContext = new QTestCommandContext();
+     QtComPtr< QITaskCommand> taskcmd = new QTestCommand();
+    taskcmd->addContext(taskcmdContext);
+    taskcmd->removeContext(taskcmdContext);
 
     QFunctionPointer symbol = QLibrary::resolve("./qwlcom", "QtDllGetClassObject");
     if( !symbol )

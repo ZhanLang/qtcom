@@ -14,7 +14,7 @@ public:
         QTCOM_QUERYINTERFACE_ENTRY(QITaskCommand)
     QTCOM_QUERYINTERFACE_END
 
-    QTaskCommandBase( void* parent = nullptr):m_priority(10),m_cancel(false)
+    QTaskCommandBase( void* parent = nullptr):m_priority(10)
     {
         Q_UNUSED(parent)
     }
@@ -41,23 +41,19 @@ protected:
     virtual QErrorCode run() = 0;
 
     virtual void cancel(){
-        m_cancel = true;
-
-        QHash<QString, QtComPtr<QITaskCommandContext>>::iterator it = m_contexts.begin();
+        QList<QtComPtr<QITaskCommandContext>>::iterator it = m_contexts.begin();
         for( ; it != m_contexts.end(); it++){
-            QtComPtr<QITaskCommandContext> p = it.value();
+            QtComPtr<QITaskCommandContext> p = *it;
             if(p)
                 p->cancel();
         }
     }
 
     virtual bool isCancel(){
-        if( m_cancel )
-            return m_cancel;
 
-        QHash<QString, QtComPtr<QITaskCommandContext>>::iterator it = m_contexts.begin();
+        QList<QtComPtr<QITaskCommandContext>>::iterator it = m_contexts.begin();
         for( ; it != m_contexts.end(); it++){
-            QtComPtr<QITaskCommandContext> p = it.value();
+            QtComPtr<QITaskCommandContext> p = *it;
             if(p && p->isCancel())
                 return true;
         }
@@ -65,23 +61,16 @@ protected:
         return false;
     }
 
-    virtual void setContext(const QString& id, QITaskCommandContext* context){
+    virtual void addContext(QITaskCommandContext* context){
 		
         if(context){
-            m_contexts.insert(id,context);
+            m_contexts.append(context);
         }
     }
 
-    virtual void getContext(const QString& id, QITaskCommandContext** context){
-		
-        QHash<QString, QtComPtr<QITaskCommandContext>>::iterator it = m_contexts.find(id);
-        if( it != m_contexts.end()){
-            it.value()->QueryInterface(qt_uuidof(QITaskCommandContext), (void**)context);
-        }
-    }
 
-    virtual void removeContext(const QString& id){
-        m_contexts.remove(id);
+    virtual void removeContext(QITaskCommandContext* context){
+        m_contexts.removeOne(context);
     }
 
     virtual void reslove(){
@@ -101,10 +90,8 @@ protected:
     }
 private:
     QString m_name;
-    QHash<QString, QtComPtr<QITaskCommandContext>> m_contexts;
-
+    QList<QtComPtr<QITaskCommandContext>> m_contexts;
     int m_priority;
-    bool m_cancel;
 };
 
 #endif

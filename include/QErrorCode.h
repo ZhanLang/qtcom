@@ -6,6 +6,7 @@ class QErrorCode
 {
 public:
     enum{
+        Ok,
         Runtime = 5000,
         CppException,
         Canceled
