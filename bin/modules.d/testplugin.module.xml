@@ -1,0 +1,7 @@
+<module>
+	<name>testplugin</name>
+	<path>./</path>
+	<class>
+		<clsid>qtcom.plugin.testplugin</clsid>
+	</class>
+</module>

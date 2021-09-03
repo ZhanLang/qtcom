@@ -1,0 +1,11 @@
+<plugin>
+	<name>testmodule</name>
+	<class>
+		<clsid id="qtcom.plugin.testplugin" index="-1">
+			<properties>
+				<key1>value</key1>
+				<key2>value2</key2>
+			</properties>
+		</clsid>
+	</class>
+</plugin>

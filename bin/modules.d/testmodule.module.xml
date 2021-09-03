@@ -1,0 +1,7 @@
+<module>
+	<name>testmodule</name>
+	<path>./</path>
+	<class>
+		<clsid>qtcom.class.printhelloword</clsid>
+	</class>
+</module>
